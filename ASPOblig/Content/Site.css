@@ -1,75 +1,107 @@
-body
-{
-    font-size: .85em;
-    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
-    color: #232323;
-    background-color: #fff;
+* {
+	padding: 0px;
+	margin: 0px;
 }
 
-header,
-footer,
-nav,
-section {
-    display: block;
+body {
+	background: #333;
+	color: #FFF;
+	font: 12px Open Sans, sans-serif;
 }
 
-/* Styles for basic forms
------------------------------------------------------------*/
-
-fieldset 
-{
-    border:1px solid #ddd;
-    padding:0 1.4em 1.4em 1.4em;
-    margin:0 0 1.5em 0;
+#chat {
+	position: absolute;
+	left: 10px;
+	right: 220px;
+	top: 47px;
+	bottom: 60px;
+	background: #222;
+	padding: 10px;
+	overflow: auto;
 }
 
-legend 
-{
-    font-size:1.2em;
-    font-weight: bold;
+#chat b {
+	color: #FFB300;
 }
 
-textarea 
-{
-    min-height: 75px;
+#chat p {
+	margin-bottom: 5px;
 }
 
-.editor-label 
-{
-    margin: 1em 0 0 0;
+.message {
+	display: none;
 }
 
-.editor-field 
-{
-    margin:0.5em 0 0 0;
+.timestamp {
+	color: #444;
 }
 
-
-/* Styles for validation helpers
------------------------------------------------------------*/
-.field-validation-error
-{
-    color: #ff0000;
+#userinfo {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	padding: 5px 10px;
+	width: 180px;
+	background: #222;
+	cursor: pointer;
 }
 
-.field-validation-valid
-{
-    display: none;
+#userinfo b {
+	color: #FFB300;
 }
 
-.input-validation-error
-{
-    border: 1px solid #ff0000;
-    background-color: #ffeeee;
+#userinfo:hover {
+	background: #111;
 }
 
-.validation-summary-errors
-{
-    font-weight: bold;
-    color: #ff0000;
+#users {
+	position: absolute;
+	right: 10px;
+	top: 47px;
+	bottom: 60px;
+	width: 200px;
+	background: #222;
 }
 
-.validation-summary-valid
-{
-    display: none;
+#users p {
+	padding: 5px 10px;
+}
+
+#users p:hover {
+	background: #111;
+	cursor: pointer;
+}
+
+#entry {
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	height: 40px;
+	bottom: 10px;
+	background: #222;
+	padding-left: 10px;
+	color: #FFF;
+	font: 16px Open Sans, sans-serif;
+	border: none;
+	outline: none;
+}
+
+#entry:focus {
+	border: 1px solid #111;
+	height: 38px;
+}
+
+.tab {
+	color: #FFB300;
+	float: left;
+	margin: 10px;
+	margin-right: 0px;
+	padding: 5px 10px;
+	background: #222;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.tab:hover {
+	background: #111;
 }

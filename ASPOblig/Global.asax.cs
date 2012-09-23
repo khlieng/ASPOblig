@@ -27,6 +27,11 @@ namespace ASPOblig
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
             );
 
+            routes.MapRoute(
+                "Landing",
+                "",
+                new { controller = "Home", action = "Index" }
+            );
         }
 
         protected void Application_Start()

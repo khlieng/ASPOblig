@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div>
+	<div class="tab">Lobby</div>
+	<div class="tab">Rom 1</div>
+	<div class="tab">...</div>
+</div>
+<div id="userinfo">Logget inn som <b>Admin</b></div>
+<div id="chat">
+	<p><span class="timestamp">[18:30]</span> <b>Bruker1</b> Oy</p>
+	<p><span class="timestamp">[18:30]</span> <b>Bruker2</b> Hallo</p>
+	<p><span class="timestamp">[18:33]</span> <b>Admin</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet sem sit amet ante vehicula tincidunt. Nam nisi orci, molestie at euismod non, imperdiet non nisl. Sed ac sapien vitae magna auctor varius. Nunc at orci neque. Nulla ornare vehicula mi, id pellentesque nisl pretium sodales. Integer varius nulla sed felis ornare condimentum et eget dolor. Quisque orci velit, ornare non pellentesque adipiscing, tincidunt vitae nibh. Fusce sed elit nunc, sed viverra felis. Maecenas ut nunc et erat pretium suscipit vel nec elit.</p>
+	<p><span class="timestamp">[19:02]</span> <b>Bruker2</b> Nam sapien lectus, laoreet eu mollis ut, luctus gravida mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras purus erat, porttitor a eleifend sit amet, tristique quis purus. Nullam ac mauris lacus. Ut quis ligula tortor. Sed odio felis, blandit in molestie et, convallis vel magna. Phasellus ut metus ac neque auctor aliquet a vel metus. Integer eget orci dui. Duis gravida erat a lacus facilisis ut pharetra est condimentum.</p>
+</div>
+<div id="users">
+	<p>Admin</p>
+	<p>Bruker1</p>
+	<p>Bruker2</p>
+</div>
+<input type="text" id="entry" />
+
+<script>
+$(function () {
+    $("#entry").keypress(function (event) {
+        if (event.which == 13) {
+            var date = new Date();
+            var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
+            $("#chat").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>Admin</b> ' + $("#entry").val());
+            $(".message").fadeIn();
+            $("#entry").val("");
+        }
+    })
+})
+
+function pad(n) {
+    if (n < 10)
+        return "0" + n;
+    return n;
+}
+</script>
