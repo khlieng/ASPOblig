@@ -2,4 +2,12 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<form action="/" method="post">
+    <p>
+        @Html.TextBox("Username")
+    </p>
+    <p>
+        @Html.TextBox("Password")
+    </p>
+    <input type="submit" value="Logg inn" />
+</form>

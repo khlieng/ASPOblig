@@ -10,13 +10,25 @@ namespace ASPOblig.Controllers
     {
         //
         // GET: /
-
+        
         public ActionResult Index()
         {
-            bool login = true;
-
-            if (login)
+            if (Session["login"] != null)
             {
+                return RedirectToAction("Index", "Chat");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Index(string username, string password)
+        {
+            if (username == "bjarne")
+            {
+                Session["login"] = true;
                 return RedirectToAction("Index", "Chat");
             }
             else
