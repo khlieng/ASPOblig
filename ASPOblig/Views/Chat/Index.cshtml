@@ -12,6 +12,8 @@
 <input type="text" id="entry" />
 
 <script type="text/javascript">
+    var selectedChannel;
+
     $(document).ready(function () {
         $(window).bind("beforeunload", function () {
             $.get("/Chat/Logout", function () { });
@@ -57,7 +59,7 @@
                 $("#l").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>Admin</b> ' + message);
                 $(".message").fadeIn();
                 $("#chat").attr({ scrollTop: $("#chat").attr("scrollHeight") });
-                $("#entry").val("");
+                $(this).val("");
             }
         });
         setTimeout(refreshMessages, 10);
@@ -75,6 +77,7 @@
         $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
         $("#chats").append('<div id="' + channel + '" class="chat"></div>');
 
+        selectedChannel = channel;
         $(".tab").removeClass("selected");
         $("#chan-" + channel).addClass("selected");
         $(".chat").hide();
@@ -82,7 +85,7 @@
         document.title = channel + " [1]";
 
         $(".tab").click(function () {
-            var selectedChannel = $(this).attr("id").split("-")[1];
+            selectedChannel = $(this).attr("id").split("-")[1];
             if (selectedChannel != null) {
                 $(".tab").removeClass("selected");
                 $(this).addClass("selected");
