@@ -117,7 +117,17 @@ body {
     float: left;
 	margin: 10px;
 	margin-right: 0px;
-	padding: 5px 10px;
+	padding: 5px 6px;
 	border: none;
 	outline: none;
+	background: #222;
+	color: #FFF;
+	font: 12px Open Sans, sans-serif;
+	display: none;
+}
+
+#textbox-channel:focus
+{
+    border: 1px solid #111;
+    padding: 4px 5px;
 }

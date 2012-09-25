@@ -3,24 +3,22 @@
 }
 
 <div id="channels">
+    <div id="addChannel" class="tab">></div>
     <input type="text" id="textbox-channel" />
 </div>
 <div id="userinfo">Logget inn som <b>Admin</b></div>
 <div id="chats">
-    <div id="lobby" class="chat">
+    <!--<div id="lobby" class="chat">
 	    <p><span class="timestamp">[18:30]</span> <b>Bruker1</b> Oy</p>
 	    <p><span class="timestamp">[18:30]</span> <b>Bruker2</b> Hallo</p>
 	    <p><span class="timestamp">[18:33]</span> <b>Admin</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet sem sit amet ante vehicula tincidunt. Nam nisi orci, molestie at euismod non, imperdiet non nisl. Sed ac sapien vitae magna auctor varius. Nunc at orci neque. Nulla ornare vehicula mi, id pellentesque nisl pretium sodales. Integer varius nulla sed felis ornare condimentum et eget dolor. Quisque orci velit, ornare non pellentesque adipiscing, tincidunt vitae nibh. Fusce sed elit nunc, sed viverra felis. Maecenas ut nunc et erat pretium suscipit vel nec elit.</p>
 	    <p><span class="timestamp">[19:02]</span> <b>Bruker2</b> Nam sapien lectus, laoreet eu mollis ut, luctus gravida mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras purus erat, porttitor a eleifend sit amet, tristique quis purus. Nullam ac mauris lacus. Ut quis ligula tortor. Sed odio felis, blandit in molestie et, convallis vel magna. Phasellus ut metus ac neque auctor aliquet a vel metus. Integer eget orci dui. Duis gravida erat a lacus facilisis ut pharetra est condimentum.</p>
-    </div>
-    <div id="kanal1" class="chat">
-    
-    </div>
+    </div>-->
 </div>
 <div id="users">
-	<p>Admin</p>
+	<!--<p>Admin</p>
 	<p>Bruker1</p>
-	<p>Bruker2</p>
+	<p>Bruker2</p>-->
 </div>
 <input type="text" id="entry" />
 
@@ -28,6 +26,10 @@
     var selectedChannel = "lobby";
 
     $(document).ready(function () {
+        $(window).bind("beforeunload", function () {
+            $.get("/Chat/Logout", function () { });
+        });
+
         joinChannel("lobby");
 
         $.get("/Chat/Join", function () { });
@@ -35,11 +37,26 @@
             $("#userinfo").html("Logget inn som <b>" + result + "</b>");
         });
 
+        $("#addChannel").click(function () {
+            $(this).hide();
+            $("#textbox-channel").show();
+            $("#textbox-channel").focus();
+        });
+
         $("#textbox-channel").keypress(function (event) {
             if (event.which == 13) {
-                joinChannel($(this).val());
+                if ($(this).val() != "") {
+                    joinChannel($(this).val());
+                }
                 $(this).val("");
+                $(this).hide();
+                $("#addChannel").show();
             }
+        });
+
+        $("#textbox-channel").focusout(function () {
+            $(this).hide();
+            $("#addChannel").show();
         });
 
         $("#entry").keypress(function (event) {
@@ -68,7 +85,7 @@
             }
         });
 
-        $("#textbox-channel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
+        $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
         $("#chats").append('<div id="' + channel + '" class="chat"></div>');
 
         $(".tab").removeClass("selected");
@@ -78,10 +95,12 @@
 
         $(".tab").click(function () {
             selectedChannel = $(this).attr("id").split("-")[1];
-            $(".tab").removeClass("selected");
-            $(this).addClass("selected");
-            $(".chat").hide();
-            $("#" + selectedChannel).show();
+            if (selectedChannel != null) {
+                $(".tab").removeClass("selected");
+                $(this).addClass("selected");
+                $(".chat").hide();
+                $("#" + selectedChannel).show();
+            }
         });
     }
 

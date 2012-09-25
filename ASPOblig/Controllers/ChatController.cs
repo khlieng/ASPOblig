@@ -83,7 +83,19 @@ namespace ASPOblig.Controllers
         public ActionResult GetUsers(string channel)
         {
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
-            return Json(db.Users.Where(u => db.UserChannelMappings.Where(uc => uc.channelid == channelId).Where(uc => uc.userid == u.id).Count() > 0));
+            var channels = db.UserChannelMappings.Where(m => m.id == channelId);
+            var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
+
+        public void Logout()
+        {
+            try
+            {
+                var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"]);
+                db.UserChannelMappings.DeleteAllOnSubmit(channels);
+            }
+            catch (Exception e) { }
         }
     }
 }
