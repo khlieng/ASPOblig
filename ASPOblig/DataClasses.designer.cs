@@ -22,7 +22,7 @@ namespace ASPOblig
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Database")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Database1")]
 	public partial class DataClassesDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -36,7 +36,7 @@ namespace ASPOblig
     #endregion
 		
 		public DataClassesDataContext() : 
-				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString, mappingSource)
+				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["Database1ConnectionString"].ConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -86,9 +86,9 @@ namespace ASPOblig
 		
 		private string _destination;
 		
-		private System.DateTime _datetime;
-		
 		private string _message;
+		
+		private System.DateTime _datetime;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -100,10 +100,10 @@ namespace ASPOblig
     partial void OnsenderChanged();
     partial void OndestinationChanging(string value);
     partial void OndestinationChanged();
-    partial void OndatetimeChanging(System.DateTime value);
-    partial void OndatetimeChanged();
     partial void OnmessageChanging(string value);
     partial void OnmessageChanged();
+    partial void OndatetimeChanging(System.DateTime value);
+    partial void OndatetimeChanged();
     #endregion
 		
 		public Message()
@@ -171,26 +171,6 @@ namespace ASPOblig
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_datetime", DbType="DateTime NOT NULL")]
-		public System.DateTime datetime
-		{
-			get
-			{
-				return this._datetime;
-			}
-			set
-			{
-				if ((this._datetime != value))
-				{
-					this.OndatetimeChanging(value);
-					this.SendPropertyChanging();
-					this._datetime = value;
-					this.SendPropertyChanged("datetime");
-					this.OndatetimeChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_message", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string message
 		{
@@ -207,6 +187,26 @@ namespace ASPOblig
 					this._message = value;
 					this.SendPropertyChanged("message");
 					this.OnmessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_datetime", DbType="DateTime NOT NULL")]
+		public System.DateTime datetime
+		{
+			get
+			{
+				return this._datetime;
+			}
+			set
+			{
+				if ((this._datetime != value))
+				{
+					this.OndatetimeChanging(value);
+					this.SendPropertyChanging();
+					this._datetime = value;
+					this.SendPropertyChanged("datetime");
+					this.OndatetimeChanged();
 				}
 			}
 		}
