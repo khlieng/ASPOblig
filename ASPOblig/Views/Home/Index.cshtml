@@ -1,14 +1,16 @@
 ﻿@{
     ViewBag.Title = "Index";
 }
-@ViewBag.name
 
-<form action="/" method="post">
-    <p>
-        @Html.TextBox("Username")
-    </p>
-    <p>
-        @Html.TextBox("Password")
-    </p>
-    <input type="submit" value="Bli med!" />
-</form>
+<div id="login-container">
+    <h1>Dette er en chat</h1>
+    <form action="/" method="post">
+        <p>
+            <input type="text" name="Username" placeholder="Nick" />
+        </p>
+        <p>
+            <input type="password" name="Password" placeholder="Passord" />
+        </p>
+        <input type="submit" value="Bli med!" />
+    </form>
+</div>

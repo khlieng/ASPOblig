@@ -19,6 +19,7 @@ body {
 	padding: 10px;
 	overflow: auto;
 	display: none;
+	border-radius: 2px;
 }
 
 .chat b {
@@ -45,6 +46,8 @@ body {
 	width: 180px;
 	background: #222;
 	cursor: pointer;
+	border-radius: 2px;
+	font: 12px Open Sans, sans-serif;
 }
 
 #userinfo b {
@@ -62,6 +65,7 @@ body {
 	bottom: 60px;
 	width: 200px;
 	background: #222;
+	border-radius: 2px;
 }
 
 #users p {
@@ -85,14 +89,47 @@ body {
 	font: 16px Open Sans, sans-serif;
 	border: none;
 	outline: none;
+	border-radius: 2px;
 }
 
-#entry:focus {
+#entry:focus, #login-container input:focus {
 	border: 1px solid #111;
 	height: 38px;
 }
 
-.tab {
+#login-container 
+{
+    margin: 0px auto;
+    width: 200px;
+    margin-top: 100px;
+}
+
+#login-container h1 {
+    font: 32px Oswald, sans-serif;
+}
+
+#login-container input 
+{
+    font: 12px Open Sans, sans-serif;
+    background: #222;
+    color: #FFF;
+    height: 40px;
+    width: 180px;
+    outline: none;
+    border: none;
+    margin-bottom: 5px;
+    padding: 0px 10px;
+    border-radius: 2px;
+}
+
+#login-container input:focus 
+{
+    padding: 0px 9px;
+}
+
+.tab 
+{
+    font: 12px Open Sans, sans-serif;
 	color: #FFB300;
 	float: left;
 	margin: 10px;
@@ -101,6 +138,7 @@ body {
 	background: #222;
 	cursor: pointer;
 	font-weight: bold;
+	border-radius: 2px;
 }
 
 .tab:hover {
@@ -124,10 +162,43 @@ body {
 	color: #FFF;
 	font: 12px Open Sans, sans-serif;
 	display: none;
+	border-radius: 2px;
 }
 
 #textbox-channel:focus
 {
     border: 1px solid #111;
     padding: 4px 5px;
+}
+
+#login-container input[type="submit"] {
+	font: 16px Oswald, sans-serif;
+	padding: 5px;
+	width: 200px;
+	border: 1px solid #111;
+	color: #FFF;
+	cursor: pointer;
+
+	box-shadow: inset 0px 1px 1px #AFE236;
+	-moz-box-shadow: inset 0px 1px 1px #AFE236;
+	-webkit-box-shadow: inset 0px 1px 1px #AFE236;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+
+	background: #8DC210;
+	border: 1px solid #739F0D;
+	text-shadow: 0px 1px 1px #4B6805;
+}
+
+#login-container input[type="submit"]:hover {
+	border: 1px solid #4B6805;
+}
+
+#login-container input[type="submit"]:active {
+	background: #8DC210;
+	border: 1px solid #4B6805;
+	box-shadow: inset 0px 2px 2px #4B6805;
+	-webkit-box-shadow: inset 0px 2px 2px #4B6805;
+	-moz-box-shadow: inset 0px 2px 2px #4B6805;
 }
