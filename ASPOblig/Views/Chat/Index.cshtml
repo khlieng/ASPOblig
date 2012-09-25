@@ -2,17 +2,20 @@
     ViewBag.Title = "Index";
 }
 
-<div>
-	<div class="tab">Lobby</div>
-	<div class="tab">Rom 1</div>
-	<div class="tab">...</div>
+<div id="channels">
+    <input type="text" id="textbox-channel" />
 </div>
 <div id="userinfo">Logget inn som <b>Admin</b></div>
-<div id="chat">
-	<p><span class="timestamp">[18:30]</span> <b>Bruker1</b> Oy</p>
-	<p><span class="timestamp">[18:30]</span> <b>Bruker2</b> Hallo</p>
-	<p><span class="timestamp">[18:33]</span> <b>Admin</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet sem sit amet ante vehicula tincidunt. Nam nisi orci, molestie at euismod non, imperdiet non nisl. Sed ac sapien vitae magna auctor varius. Nunc at orci neque. Nulla ornare vehicula mi, id pellentesque nisl pretium sodales. Integer varius nulla sed felis ornare condimentum et eget dolor. Quisque orci velit, ornare non pellentesque adipiscing, tincidunt vitae nibh. Fusce sed elit nunc, sed viverra felis. Maecenas ut nunc et erat pretium suscipit vel nec elit.</p>
-	<p><span class="timestamp">[19:02]</span> <b>Bruker2</b> Nam sapien lectus, laoreet eu mollis ut, luctus gravida mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras purus erat, porttitor a eleifend sit amet, tristique quis purus. Nullam ac mauris lacus. Ut quis ligula tortor. Sed odio felis, blandit in molestie et, convallis vel magna. Phasellus ut metus ac neque auctor aliquet a vel metus. Integer eget orci dui. Duis gravida erat a lacus facilisis ut pharetra est condimentum.</p>
+<div id="chats">
+    <div id="lobby" class="chat">
+	    <p><span class="timestamp">[18:30]</span> <b>Bruker1</b> Oy</p>
+	    <p><span class="timestamp">[18:30]</span> <b>Bruker2</b> Hallo</p>
+	    <p><span class="timestamp">[18:33]</span> <b>Admin</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet sem sit amet ante vehicula tincidunt. Nam nisi orci, molestie at euismod non, imperdiet non nisl. Sed ac sapien vitae magna auctor varius. Nunc at orci neque. Nulla ornare vehicula mi, id pellentesque nisl pretium sodales. Integer varius nulla sed felis ornare condimentum et eget dolor. Quisque orci velit, ornare non pellentesque adipiscing, tincidunt vitae nibh. Fusce sed elit nunc, sed viverra felis. Maecenas ut nunc et erat pretium suscipit vel nec elit.</p>
+	    <p><span class="timestamp">[19:02]</span> <b>Bruker2</b> Nam sapien lectus, laoreet eu mollis ut, luctus gravida mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras purus erat, porttitor a eleifend sit amet, tristique quis purus. Nullam ac mauris lacus. Ut quis ligula tortor. Sed odio felis, blandit in molestie et, convallis vel magna. Phasellus ut metus ac neque auctor aliquet a vel metus. Integer eget orci dui. Duis gravida erat a lacus facilisis ut pharetra est condimentum.</p>
+    </div>
+    <div id="kanal1" class="chat">
+    
+    </div>
 </div>
 <div id="users">
 	<p>Admin</p>
@@ -22,9 +25,22 @@
 <input type="text" id="entry" />
 
 <script>
+    var selectedChannel = "lobby";
+
     $(document).ready(function () {
+        joinChannel("lobby");
 
         $.get("/Chat/Join", function () { });
+        $.get("/Chat/GetUserData", function (result) {
+            $("#userinfo").html("Logget inn som <b>" + result + "</b>");
+        });
+
+        $("#textbox-channel").keypress(function (event) {
+            if (event.which == 13) {
+                joinChannel($(this).val());
+                $(this).val("");
+            }
+        });
 
         $("#entry").keypress(function (event) {
             if (event.which == 13) {
@@ -32,9 +48,9 @@
                 var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
                 var message = $("#entry").val();
 
-                $.get("/Chat/SendMessage", { message: message }, function (result) { });
+                $.get("/Chat/SendMessage", { message: message, destination: selectedChannel }, function (result) { });
 
-                $("#chat").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>Admin</b> ' + message);
+                $("#l").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>Admin</b> ' + message);
                 $(".message").fadeIn();
                 $("#chat").attr({ scrollTop: $("#chat").attr("scrollHeight") });
                 $("#entry").val("");
@@ -43,15 +59,42 @@
         setTimeout(foo, 10);
     });
 
+    function joinChannel(channel) {
+        $.get("/Chat/JoinChannel", { channel: channel }, function() { });
+        $.get("/Chat/GetUsers", { channel: channel }, function(result) {
+            for (user in result)
+            {
+                $("#users").append('<p>' + result[user].nick + '</p>');
+            }
+        });
+
+        $("#textbox-channel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
+        $("#chats").append('<div id="' + channel + '" class="chat"></div>');
+
+        $(".tab").removeClass("selected");
+        $("#chan-" + channel).addClass("selected");
+        $(".chat").hide();
+        $("#" + channel).show();
+
+        $(".tab").click(function () {
+            selectedChannel = $(this).attr("id").split("-")[1];
+            $(".tab").removeClass("selected");
+            $(this).addClass("selected");
+            $(".chat").hide();
+            $("#" + selectedChannel).show();
+        });
+    }
+
 function foo() {
     $.get("/Chat/GetMessages", function (result) {
         var date = new Date();
         var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
 
         for (msg in result) {
-            $("#chat").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + result[msg].sender + '</b> ' + result[msg].message);
+            var channel = "#" + result[msg].destination;
+            $(channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + result[msg].sender + '</b> ' + result[msg].message);
             $(".message").fadeIn();
-            $("#chat").attr({ scrollTop: $("#chat").attr("scrollHeight") });
+            $(channel).attr({ scrollTop: $(channel).attr("scrollHeight") });
         }
 
         setTimeout(foo, 10);

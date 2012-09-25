@@ -8,6 +8,8 @@ namespace ASPOblig.Controllers
 {
     public class ChatController : Controller
     {
+        private static DataClassesDataContext db = new DataClassesDataContext();
+
         //
         // GET: /Chat/
 
@@ -20,16 +22,23 @@ namespace ASPOblig.Controllers
 
         public void Join()
         {
-            Session["lastRequest"] = DateTime.Now;
-            Session["currentPos"] = 0;
+            if (Session["join"] == null)
+            {
+                Session["lastRequest"] = DateTime.Now;
+                Session["currentPos"] = 0;
+                Session["join"] = true;
+            }
         }
 
-        public void SendMessage(string message)
+        public void SendMessage(string message, string destination)
         {
             if (message != null)
             {
-                DataClassesDataContext db = new DataClassesDataContext();
-                db.Messages.InsertOnSubmit(new Message { sender = "Herp", destination = "Lobby", message = message, datetime = DateTime.Now });                
+                db.Messages.InsertOnSubmit(new Message { 
+                    sender = Session["nick"].ToString(), 
+                    destination = destination, 
+                    message = message, 
+                    datetime = DateTime.Now });                
                 db.SubmitChanges();
 
                 head++;
@@ -38,7 +47,6 @@ namespace ASPOblig.Controllers
 
         public ActionResult GetMessages()
         {
-            DataClassesDataContext db = new DataClassesDataContext();
             int currentPos = (int)Session["currentPos"];
             
             if (head > currentPos)
@@ -53,6 +61,29 @@ namespace ASPOblig.Controllers
 
             //Session["lastRequest"] = DateTime.Now;
             return Json(null, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetUserData()
+        {
+            return Content(Session["nick"].ToString());
+        }
+
+        public void JoinChannel(string channel)
+        {
+            if (db.Channels.Where(c => c.name == channel).Count() < 1)
+            {
+                db.Channels.InsertOnSubmit(new Channel { name = channel });
+                db.SubmitChanges();
+            }
+
+            db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping { userid = (int)Session["userid"], channelid = db.Channels.Where(c => c.name == channel).First().id, type = "join" });
+            db.SubmitChanges();
+        }
+
+        public ActionResult GetUsers(string channel)
+        {
+            int channelId = db.Channels.Where(c => c.name == channel).First().id;
+            return Json(db.Users.Where(u => db.UserChannelMappings.Where(uc => uc.channelid == channelId).Where(uc => uc.userid == u.id).Count() > 0));
         }
     }
 }

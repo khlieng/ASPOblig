@@ -8,6 +8,8 @@ namespace ASPOblig.Controllers
 {
     public class HomeController : Controller
     {
+        private static DataClassesDataContext db = new DataClassesDataContext();
+
         //
         // GET: /
         
@@ -26,15 +28,20 @@ namespace ASPOblig.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Index(string username, string password)
         {
-            if (username == "bjarne")
+            if (db.Users.Where(u => u.nick == username).Count() < 1)
+            {
+                db.Users.InsertOnSubmit(new User { nick = username, password = password });
+                db.SubmitChanges();
+            }
+
+            if (db.Users.Where(u => u.nick == username && u.password == password).Count() > 0)
             {
                 Session["login"] = true;
-                return RedirectToAction("Index", "Chat");
+                Session["nick"] = username;
+                Session["userid"] = db.Users.Where(u => u.nick == username).First().id;
             }
-            else
-            {
-                return View();
-            }
+            
+            return RedirectToAction("Index", "Chat");
         }
     }
 }

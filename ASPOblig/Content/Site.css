@@ -9,7 +9,7 @@ body {
 	font: 12px Open Sans, sans-serif;
 }
 
-#chat {
+.chat {
 	position: absolute;
 	left: 10px;
 	right: 220px;
@@ -18,13 +18,14 @@ body {
 	background: #222;
 	padding: 10px;
 	overflow: auto;
+	display: none;
 }
 
-#chat b {
+.chat b {
 	color: #FFB300;
 }
 
-#chat p {
+.chat p {
 	margin-bottom: 5px;
 }
 
@@ -104,4 +105,19 @@ body {
 
 .tab:hover {
 	background: #111;
+}
+
+.tab.selected 
+{
+    background: #000;
+}
+
+#textbox-channel 
+{
+    float: left;
+	margin: 10px;
+	margin-right: 0px;
+	padding: 5px 10px;
+	border: none;
+	outline: none;
 }
