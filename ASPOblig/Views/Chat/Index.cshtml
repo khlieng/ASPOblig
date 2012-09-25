@@ -13,19 +13,9 @@
 
 <script type="text/javascript">
     var selectedChannel;
+    var nick;
 
     $(document).ready(function () {
-        $(window).bind("beforeunload", function () {
-            $.get("/Chat/Logout", function () { });
-        });
-
-        joinChannel("Lobby");
-
-        $.get("/Chat/Join", function () { });
-        $.get("/Chat/GetUserData", function (result) {
-            $("#userinfo").html("Du er <b>" + result + "</b>");
-        });
-
         $("#addChannel").click(function () {
             $(this).hide();
             $("#textbox-channel").show();
@@ -56,21 +46,30 @@
 
                 $.get("/Chat/SendMessage", { message: message, destination: selectedChannel }, function (result) { });
 
-                $("#l").append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>Admin</b> ' + message);
+                $("#" + selectedChannel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
                 $(".message").fadeIn();
-                $("#chat").attr({ scrollTop: $("#chat").attr("scrollHeight") });
+                $("#" + selectedChannel).attr({ scrollTop: $("#chat").attr("scrollHeight") });
                 $(this).val("");
             }
         });
-        setTimeout(refreshMessages, 10);
+
+        $.get("/Chat/GetUserData", function (result) {
+            nick = result;
+            $("#userinfo").html("Du er <b>" + nick + "</b>");
+        });
+
+        $.get("/Chat/Join", function () {
+            joinChannel("Lobby");
+            setTimeout(refreshMessages, 1000);
+        });
     });
 
     function joinChannel(channel) {
         $.get("/Chat/JoinChannel", { channel: channel }, function() { });
         $.get("/Chat/GetUsers", { channel: channel }, function(result) {
-            for (user in result)
+            for (n in result)
             {
-                $("#users").append('<p>' + result[user].nick + '</p>');
+                $("#users").append('<p>' + result[n].nick + '</p>');
             }
         });
 
@@ -100,15 +99,15 @@
         $.get("/Chat/GetMessages", function (result) {
             var date = new Date();
             var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
-
-            for (msg in result) {
-                var channel = "#" + result[msg].destination;
-                $(channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + result[msg].sender + '</b> ' + result[msg].message);
+            
+            for (n in result) {
+                var channel = "#" + result[n].destination;
+                $(channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + result[n].sender + '</b> ' + result[n].message);
                 $(".message").fadeIn();
                 $(channel).attr({ scrollTop: $(channel).attr("scrollHeight") });
             }
 
-            setTimeout(refreshMessages, 10);
+            setTimeout(refreshMessages, 1000);
         });
     }
 
