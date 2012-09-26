@@ -58,7 +58,38 @@ body {
 	background: #111;
 }
 
-#users {
+#login-container h2.error 
+{
+    color: #555;
+    font: 18px Oswald, sans-serif;
+    padding-bottom: 5px;
+}
+
+#menu 
+{
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    width: 200px;
+    background: #333;
+    padding-top: 12px;
+    padding-bottom: 5px;
+    border-bottom: 5px solid #FFB300;
+    display: none;
+}
+
+#menu p 
+{
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#menu p:hover 
+{
+    background: #111;
+}
+
+.users {
 	position: absolute;
 	right: 10px;
 	top: 47px;
@@ -68,11 +99,11 @@ body {
 	border-radius: 2px;
 }
 
-#users p {
+.users p {
 	padding: 5px 10px;
 }
 
-#users p:hover {
+.users p:hover {
 	background: #111;
 	cursor: pointer;
 }

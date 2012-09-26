@@ -44,6 +44,7 @@ namespace ASPOblig.Controllers
             }
             else
             {
+                ViewBag.ErrorMessage = "Nicket er ikke tilgjengelig!";
                 return View();
             }            
         }

@@ -6,9 +6,14 @@
     <div id="addChannel" class="tab">></div>
     <input type="text" id="textbox-channel" />
 </div>
+<div id="userlists"></div>
+<div id="menu">
+    <p>Innstillinger</p>
+    <p id="logout">Logg ut</p>
+</div>
 <div id="userinfo">Du er <b>...</b></div>
 <div id="chats"></div>
-<div id="users"></div>
+
 <input type="text" id="entry" />
 
 <script type="text/javascript">
@@ -16,10 +21,22 @@
     var nick;
 
     $(document).ready(function () {
+        window.onbeforeunload = function () { $.get("/Chat/Logout", function () { }); }
+
         $("#addChannel").click(function () {
             $(this).hide();
             $("#textbox-channel").show();
             $("#textbox-channel").focus();
+        });
+
+        $("#logout").click(function () {
+            $.get("/Chat/Logout", function () {
+                location = "/";
+            });
+        });
+
+        $("#userinfo").click(function () {
+            $("#menu").toggle();
         });
 
         $("#textbox-channel").keypress(function (event) {
@@ -40,16 +57,9 @@
 
         $("#entry").keypress(function (event) {
             if (event.which == 13) {
-                var date = new Date();
-                var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
                 var message = $("#entry").val();
-
                 $.get("/Chat/SendMessage", { message: message, destination: selectedChannel }, function (result) { });
-
-                $("#" + selectedChannel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
-                $(".message").fadeIn();
-                $("#" + selectedChannel).attr({ scrollTop: $("#chat").attr("scrollHeight") });
-                $(this).val("");
+                write(message);
             }
         });
 
@@ -64,33 +74,33 @@
         });
     });
 
+    function refreshUsers(channel) {
+        $.get("/Chat/GetUsers", { channel: channel }, function (result) {
+            var userlist = "#users-" + channel;
+            $(userlist).html("");
+            for (n in result) {
+                $(userlist).append('<p>' + result[n].nick + '</p>');
+            }
+
+            setTimeout(function () { refreshUsers(channel); }, 1000);
+        });
+    }
+
     function joinChannel(channel) {
         $.get("/Chat/JoinChannel", { channel: channel }, function() { });
-        $.get("/Chat/GetUsers", { channel: channel }, function(result) {
-            for (n in result)
-            {
-                $("#users").append('<p>' + result[n].nick + '</p>');
-            }
-        });
-
+        
         $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
         $("#chats").append('<div id="' + channel + '" class="chat"></div>');
+        $("#userlists").append('<div id="users-' + channel + '" class="users"></div>'); 
 
         selectedChannel = channel;
-        $(".tab").removeClass("selected");
-        $("#chan-" + channel).addClass("selected");
-        $(".chat").hide();
-        $("#" + channel).show();
-        document.title = channel + " [1]";
+        showChannel(channel);
+        refreshUsers(channel);
 
         $(".tab").click(function () {
             selectedChannel = $(this).attr("id").split("-")[1];
             if (selectedChannel != null) {
-                $(".tab").removeClass("selected");
-                $(this).addClass("selected");
-                $(".chat").hide();
-                $("#" + selectedChannel).show();
-                document.title = selectedChannel + " [1]";
+                showChannel(selectedChannel);
             }
         });
     }
@@ -109,6 +119,27 @@
 
             setTimeout(refreshMessages, 1000);
         });
+    }
+
+    function write(message) {
+        var date = new Date();
+        var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
+
+        $("#" + selectedChannel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
+        $(".message").fadeIn();
+        $("#" + selectedChannel).attr({ scrollTop: $("#chat").attr("scrollHeight") });
+        $("#entry").val("");
+    }
+
+    function showChannel(channel) {
+        $(".tab").removeClass("selected");
+        $("#chan-" + channel).addClass("selected");
+        $(".chat").hide();
+        $("#" + channel).show();
+        $(".users").hide();
+        $("#users-" + channel).show();
+
+        document.title = channel + " [1]";
     }
 
     function pad(n) {

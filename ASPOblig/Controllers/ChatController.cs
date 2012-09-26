@@ -13,7 +13,14 @@ namespace ASPOblig.Controllers
                 
         public ActionResult Index()
         {
-            return View();
+            if (Session["login"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public void Join()
@@ -48,7 +55,7 @@ namespace ASPOblig.Controllers
             int currentPos = (int)Session["currentPos"];
             Session["currentPos"] = db.Messages.Max(m => m.id);
             
-            var messages = db.Messages.Where(m => m.id > currentPos);
+            var messages = db.Messages.Where(m => m.id > currentPos && db.Users.Where(u => u.nick == m.sender).First().id != (int)Session["userid"]);
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 
@@ -74,7 +81,7 @@ namespace ASPOblig.Controllers
         {
             DataClassesDataContext db = new DataClassesDataContext();
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
-            var channels = db.UserChannelMappings.Where(m => m.id == channelId);
+            var channels = db.UserChannelMappings.Where(m => m.channelid == channelId);
             var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
             return Json(users, JsonRequestBehavior.AllowGet);
         }
@@ -86,8 +93,10 @@ namespace ASPOblig.Controllers
             {
                 var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"]);
                 db.UserChannelMappings.DeleteAllOnSubmit(channels);
+                db.SubmitChanges();
             }
             catch (Exception e) { }
+            Session.Clear();
         }
     }
 }
