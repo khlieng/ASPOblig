@@ -82,7 +82,10 @@
                 $(userlist).append('<p>' + result[n].nick + '</p>');
             }
 
-            setTimeout(function () { refreshUsers(channel); }, 1000);
+            if (channel == selectedChannel)
+                document.title = selectedChannel + " [" + result.length + "]";
+
+            setTimeout(function () { refreshUsers(channel); }, 100);
         });
     }
 
@@ -117,7 +120,7 @@
                 $(channel).attr({ scrollTop: $(channel).attr("scrollHeight") });
             }
 
-            setTimeout(refreshMessages, 1000);
+            setTimeout(refreshMessages, 100);
         });
     }
 
@@ -127,7 +130,7 @@
 
         $("#" + selectedChannel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
         $(".message").fadeIn();
-        $("#" + selectedChannel).attr({ scrollTop: $("#chat").attr("scrollHeight") });
+        $("#" + selectedChannel).attr({ scrollTop: $("#" + selectedChannel).attr("scrollHeight") });
         $("#entry").val("");
     }
 
@@ -138,8 +141,6 @@
         $("#" + channel).show();
         $(".users").hide();
         $("#users-" + channel).show();
-
-        document.title = channel + " [1]";
     }
 
     function pad(n) {
