@@ -13,12 +13,11 @@
 </div>
 <div id="userinfo">Du er <b>...</b></div>
 <div id="chats"></div>
-
 <input type="text" id="entry" />
 
 <script type="text/javascript">
     var selectedChannel;
-    var nick;
+    var currentNick;
 
     $(document).ready(function () {
         window.onbeforeunload = function () { 
@@ -61,13 +60,14 @@
             if (event.which == 13) {
                 var message = $("#entry").val();
                 $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
-                write(message);
+                write(message, selectedChannel, currentNick);
+                $("#entry").val("");
             }
         });
 
         $.get("Chat/GetUserData", function (result) {
-            nick = result;
-            $("#userinfo").html("Du er <b>" + nick + "</b>");
+            currentNick = result;
+            $("#userinfo").html("Du er <b>" + currentNick + "</b>");
         });
 
         $.get("Chat/Join", function () {
@@ -84,8 +84,9 @@
                 $(userlist).append('<p>' + result[n].nick + '</p>');
             }
 
-            if (channel == selectedChannel)
+            if (channel == selectedChannel) {
                 document.title = selectedChannel + " [" + result.length + "]";
+            }
 
             setTimeout(function () { refreshUsers(channel); }, 100);
         });
@@ -112,29 +113,22 @@
     }
 
     function refreshMessages() {
-        $.get("Chat/GetMessages", function (result) {
-            var date = new Date();
-            var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
-            
+        $.get("Chat/GetMessages", function (result) {            
             for (n in result) {
-                var channel = "#" + result[n].destination;
-                $(channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + result[n].sender + '</b> ' + result[n].message);
-                $(".message").fadeIn();
-                $(channel).attr({ scrollTop: $(channel).attr("scrollHeight") });
+                write(result[n].message, result[n].destination, result[n].sender);
             }
 
             setTimeout(refreshMessages, 100);
         });
     }
 
-    function write(message) {
+    function write(message, channel, nick) {
         var date = new Date();
         var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
 
-        $("#" + selectedChannel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
+        $("#" + channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
         $(".message").fadeIn();
-        $("#" + selectedChannel).attr({ scrollTop: $("#" + selectedChannel).attr("scrollHeight") });
-        $("#entry").val("");
+        $("#" + channel).attr({ scrollTop: $("#" + channel).attr("scrollHeight") });
     }
 
     function showChannel(channel) {
@@ -147,8 +141,9 @@
     }
 
     function pad(n) {
-        if (n < 10)
+        if (n < 10) {
             return "0" + n;
+        }
         return n;
     }
 </script>
