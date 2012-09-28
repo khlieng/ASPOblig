@@ -22,7 +22,7 @@ namespace ASPOblig
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Database1")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="gruppe4_h12")]
 	public partial class DataClassesDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,9 +30,6 @@ namespace ASPOblig
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertMessage(Message instance);
-    partial void UpdateMessage(Message instance);
-    partial void DeleteMessage(Message instance);
     partial void InsertUser(User instance);
     partial void UpdateUser(User instance);
     partial void DeleteUser(User instance);
@@ -42,10 +39,13 @@ namespace ASPOblig
     partial void InsertUserChannelMapping(UserChannelMapping instance);
     partial void UpdateUserChannelMapping(UserChannelMapping instance);
     partial void DeleteUserChannelMapping(UserChannelMapping instance);
+    partial void InsertMessage(Message instance);
+    partial void UpdateMessage(Message instance);
+    partial void DeleteMessage(Message instance);
     #endregion
 		
 		public DataClassesDataContext() : 
-				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["Database1ConnectionString"].ConnectionString, mappingSource)
+				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["gruppe4_h12ConnectionString"].ConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -74,14 +74,6 @@ namespace ASPOblig
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Message> Messages
-		{
-			get
-			{
-				return this.GetTable<Message>();
-			}
-		}
-		
 		public System.Data.Linq.Table<User> Users
 		{
 			get
@@ -105,162 +97,12 @@ namespace ASPOblig
 				return this.GetTable<UserChannelMapping>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Messages")]
-	public partial class Message : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private string _sender;
-		
-		private string _destination;
-		
-		private string _message;
-		
-		private System.DateTime _datetime;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void OnsenderChanging(string value);
-    partial void OnsenderChanged();
-    partial void OndestinationChanging(string value);
-    partial void OndestinationChanged();
-    partial void OnmessageChanging(string value);
-    partial void OnmessageChanged();
-    partial void OndatetimeChanging(System.DateTime value);
-    partial void OndatetimeChanged();
-    #endregion
-		
-		public Message()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
+		public System.Data.Linq.Table<Message> Messages
 		{
 			get
 			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sender", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string sender
-		{
-			get
-			{
-				return this._sender;
-			}
-			set
-			{
-				if ((this._sender != value))
-				{
-					this.OnsenderChanging(value);
-					this.SendPropertyChanging();
-					this._sender = value;
-					this.SendPropertyChanged("sender");
-					this.OnsenderChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_destination", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
-		public string destination
-		{
-			get
-			{
-				return this._destination;
-			}
-			set
-			{
-				if ((this._destination != value))
-				{
-					this.OndestinationChanging(value);
-					this.SendPropertyChanging();
-					this._destination = value;
-					this.SendPropertyChanged("destination");
-					this.OndestinationChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_message", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
-		public string message
-		{
-			get
-			{
-				return this._message;
-			}
-			set
-			{
-				if ((this._message != value))
-				{
-					this.OnmessageChanging(value);
-					this.SendPropertyChanging();
-					this._message = value;
-					this.SendPropertyChanged("message");
-					this.OnmessageChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_datetime", DbType="DateTime NOT NULL")]
-		public System.DateTime datetime
-		{
-			get
-			{
-				return this._datetime;
-			}
-			set
-			{
-				if ((this._datetime != value))
-				{
-					this.OndatetimeChanging(value);
-					this.SendPropertyChanging();
-					this._datetime = value;
-					this.SendPropertyChanged("datetime");
-					this.OndatetimeChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				return this.GetTable<Message>();
 			}
 		}
 	}
@@ -570,6 +412,164 @@ namespace ASPOblig
 					this._type = value;
 					this.SendPropertyChanged("type");
 					this.OntypeChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Messages")]
+	public partial class Message : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _sender;
+		
+		private string _destination;
+		
+		private string _message;
+		
+		private System.DateTime _datetime;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnsenderChanging(string value);
+    partial void OnsenderChanged();
+    partial void OndestinationChanging(string value);
+    partial void OndestinationChanged();
+    partial void OnmessageChanging(string value);
+    partial void OnmessageChanged();
+    partial void OndatetimeChanging(System.DateTime value);
+    partial void OndatetimeChanged();
+    #endregion
+		
+		public Message()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sender", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string sender
+		{
+			get
+			{
+				return this._sender;
+			}
+			set
+			{
+				if ((this._sender != value))
+				{
+					this.OnsenderChanging(value);
+					this.SendPropertyChanging();
+					this._sender = value;
+					this.SendPropertyChanged("sender");
+					this.OnsenderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_destination", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string destination
+		{
+			get
+			{
+				return this._destination;
+			}
+			set
+			{
+				if ((this._destination != value))
+				{
+					this.OndestinationChanging(value);
+					this.SendPropertyChanging();
+					this._destination = value;
+					this.SendPropertyChanged("destination");
+					this.OndestinationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_message", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string message
+		{
+			get
+			{
+				return this._message;
+			}
+			set
+			{
+				if ((this._message != value))
+				{
+					this.OnmessageChanging(value);
+					this.SendPropertyChanging();
+					this._message = value;
+					this.SendPropertyChanged("message");
+					this.OnmessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_datetime", DbType="DateTime NOT NULL")]
+		public System.DateTime datetime
+		{
+			get
+			{
+				return this._datetime;
+			}
+			set
+			{
+				if ((this._datetime != value))
+				{
+					this.OndatetimeChanging(value);
+					this.SendPropertyChanging();
+					this._datetime = value;
+					this.SendPropertyChanged("datetime");
+					this.OndatetimeChanged();
 				}
 			}
 		}
