@@ -36,7 +36,7 @@ namespace ASPOblig.Controllers
         public void SendMessage(string message, string destination)
         {
             DataClassesDataContext db = new DataClassesDataContext();
-            if (message != null)
+            if (!String.IsNullOrWhiteSpace(message))
             {
                 db.Messages.InsertOnSubmit(new Message
                 {
@@ -73,7 +73,12 @@ namespace ASPOblig.Controllers
                 db.SubmitChanges();
             }
 
-            db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping { userid = (int)Session["userid"], channelid = db.Channels.Where(c => c.name == channel).First().id, type = "join" });
+            db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping 
+            { 
+                userid = (int)Session["userid"], 
+                channelid = db.Channels.Where(c => c.name == channel).First().id, 
+                type = "join" 
+            });
             db.SubmitChanges();
         }
 

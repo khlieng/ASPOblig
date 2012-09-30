@@ -38,6 +38,12 @@
 
         $("#userinfo").click(function () {
             $("#menu").toggle();
+            if ($("#menu").is(":visible")) {
+                $("#userinfo").addClass("selected");
+            }
+            else {
+                $("#userinfo").removeClass("selected");
+            }
         });
 
         $("#textbox-channel").keypress(function (event) {
@@ -82,7 +88,8 @@
             $(userlist).html("");
             for (n in result) {
                 $(userlist).append('<p>' + result[n].nick + '</p>');
-            }
+            }            
+            $(userlist + "-container").scrollbarPaper();
 
             if (channel == selectedChannel) {
                 document.title = selectedChannel + " [" + result.length + "]";
@@ -96,11 +103,13 @@
         $.get("Chat/JoinChannel", { channel: channel });
         
         $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
-        $("#chats").append('<div id="' + channel + '" class="chat"></div>');
-        $("#userlists").append('<div id="users-' + channel + '" class="users"></div>'); 
+        $("#chats").append('<div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
+        $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
 
         selectedChannel = channel;
         showChannel(channel);
+        fixScroll("#" + channel + "-container");        
+        fixScroll("#users-" + channel + "-container");
         refreshUsers(channel);
 
         $(".tab").click(function () {
@@ -128,16 +137,23 @@
 
         $("#" + channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
         $(".message").fadeIn();
-        $("#" + channel).attr({ scrollTop: $("#" + channel).attr("scrollHeight") });
+        $("#" + channel + "-container").scrollTop($("#" + channel + "-container").prop("scrollHeight"));
     }
 
     function showChannel(channel) {
         $(".tab").removeClass("selected");
         $("#chan-" + channel).addClass("selected");
-        $(".chat").hide();
-        $("#" + channel).show();
-        $(".users").hide();
-        $("#users-" + channel).show();
+        $(".chat-container").hide();
+        $("#" + channel + "-container").show();
+        $("#" + channel + "-container").scrollbarPaper();
+        $(".users-container").hide();
+        $("#users-" + channel + "-container").show();
+    }
+
+    function fixScroll(elem) {
+        $(elem).mousewheel(function(event, delta) {
+            $(elem).scrollTop($(elem).scrollTop() - delta*100);
+        });
     }
 
     function pad(n) {

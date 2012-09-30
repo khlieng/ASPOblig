@@ -9,17 +9,19 @@ body {
 	font: 12px Open Sans, sans-serif;
 }
 
-.chat {
+.chat-container {
+	display: none;
 	position: absolute;
 	left: 10px;
 	right: 220px;
 	top: 47px;
 	bottom: 60px;
-	background: #222;
-	padding: 10px;
+	background: #222;	
 	overflow: auto;
-	display: none;
-	border-radius: 2px;
+}
+
+.chat {	
+	padding: 10px;
 }
 
 .chat b {
@@ -46,15 +48,15 @@ body {
 	width: 180px;
 	background: #222;
 	cursor: pointer;
-	border-radius: 2px;
 	font: 12px Open Sans, sans-serif;
+	z-index: 3;
 }
 
 #userinfo b {
 	color: #FFB300;
 }
 
-#userinfo:hover {
+#userinfo:hover, #userinfo.selected {
 	background: #111;
 }
 
@@ -71,11 +73,12 @@ body {
     right: 10px;
     top: 30px;
     width: 200px;
-    background: #333;
+    background: #222;
     padding-top: 12px;
     padding-bottom: 5px;
     border-bottom: 5px solid #FFB300;
     display: none;
+    z-index: 2;
 }
 
 #menu p 
@@ -84,23 +87,30 @@ body {
     cursor: pointer;
 }
 
-#menu p:hover 
-{
+#menu p:hover {
     background: #111;
 }
 
-.users {
+.users-container {
 	position: absolute;
 	right: 10px;
 	top: 47px;
 	bottom: 60px;
 	width: 200px;
 	background: #222;
-	border-radius: 2px;
+	overflow: hidden;
+}
+
+.users {
 }
 
 .users p {
 	padding: 5px 10px;
+}
+
+.users p:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
 }
 
 .users p:hover {
@@ -120,7 +130,6 @@ body {
 	font: 16px Open Sans, sans-serif;
 	border: none;
 	outline: none;
-	border-radius: 2px;
 }
 
 #entry:focus, #login-container input:focus {
@@ -163,13 +172,16 @@ body {
     font: 12px Open Sans, sans-serif;
 	color: #FFB300;
 	float: left;
-	margin: 10px;
-	margin-right: 0px;
+	margin: 10px 0px;
+	margin-right: 1px;
 	padding: 5px 10px;
 	background: #222;
 	cursor: pointer;
 	font-weight: bold;
-	border-radius: 2px;
+}
+
+.tab:first-child {
+	margin-left: 10px;
 }
 
 .tab:hover {
@@ -181,11 +193,14 @@ body {
     background: #000;
 }
 
+#addChannel {
+	margin-left: 10px;
+}
+
 #textbox-channel 
 {
     float: left;
 	margin: 10px;
-	margin-right: 0px;
 	padding: 5px 6px;
 	border: none;
 	outline: none;
@@ -193,7 +208,6 @@ body {
 	color: #FFF;
 	font: 12px Open Sans, sans-serif;
 	display: none;
-	border-radius: 2px;
 }
 
 #textbox-channel:focus
@@ -232,4 +246,43 @@ body {
 	box-shadow: inset 0px 2px 2px #4B6805;
 	-webkit-box-shadow: inset 0px 2px 2px #4B6805;
 	-moz-box-shadow: inset 0px 2px 2px #4B6805;
+}
+
+div.scrollbarpaper-container
+{
+  position: absolute;
+  z-index: 1;
+  background-color: #222;
+}
+
+div.scrollbarpaper-track
+{
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  width: 10px;
+  background-color: #111;
+}
+
+div.scrollbarpaper-drag
+{
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  background-color: #444;
+}
+
+div.scrollbarpaper-drag-top
+{
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+div.scrollbarpaper-drag-bottom
+{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
