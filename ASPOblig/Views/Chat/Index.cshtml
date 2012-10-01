@@ -64,9 +64,11 @@
 
         $("#entry").keypress(function (event) {
             if (event.which == 13) {
-                var message = $("#entry").val();
-                $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
-                write(message, selectedChannel, currentNick);
+                if (selectedChannel != null) {
+                    var message = $("#entry").val();
+                    $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
+                    write(message, selectedChannel, currentNick);
+                }
                 $("#entry").val("");
             }
         });
@@ -102,7 +104,7 @@
     function joinChannel(channel) {
         $.get("Chat/JoinChannel", { channel: channel });
         
-        $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '</div>');
+        $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
         $("#chats").append('<div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
         $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
 
@@ -118,6 +120,24 @@
                 selectedChannel = channel;
                 showChannel(selectedChannel);
             }
+        });
+
+        $(".tab .close").click(function() {
+            leaveChannel($(this).parent().attr("id").split("-")[1]);
+        });
+    }
+
+    function leaveChannel(channel) {
+        $.get("Chat/LeaveChannel", { channel: channel });
+
+        if (selectedChannel == channel) {
+            selectedChannel = null;
+        }
+
+        $("#chan-" + channel).fadeOut("fast", function () {
+            $("#chan-" + channel).remove();
+            $("#" + channel + "-container").remove();
+            $("#users-" + channel + "-container").remove();
         });
     }
 
@@ -136,7 +156,7 @@
         var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
 
         $("#" + channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
-        $(".message").fadeIn();
+        $(".message").fadeIn("fast");
         $("#" + channel + "-container").scrollTop($("#" + channel + "-container").prop("scrollHeight"));
     }
 

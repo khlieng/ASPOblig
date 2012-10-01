@@ -82,6 +82,15 @@ namespace ASPOblig.Controllers
             db.SubmitChanges();
         }
 
+        public void LeaveChannel(string channel)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+            int channelId = db.Channels.Where(c => c.name == channel).First().id;
+            var mappings = db.UserChannelMappings.Where(ucm => ucm.userid == (int)Session["userid"] && ucm.channelid == channelId);
+            db.UserChannelMappings.DeleteAllOnSubmit(mappings);
+            db.SubmitChanges();
+        }
+
         public ActionResult GetUsers(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
