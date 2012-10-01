@@ -14,6 +14,11 @@
 <div id="userinfo">Du er <b>...</b></div>
 <div id="chats"></div>
 <input type="text" id="entry" />
+<div id="pms">
+    <div class="tab" id="test">bjarne</div>
+    <div class="tab">nils</div>
+</div>
+<div id="contacts"><b>13</b> kontakter pålogget</div>
 
 <script type="text/javascript">
     var selectedChannel;
@@ -89,15 +94,19 @@
             var userlist = "#users-" + channel;
             $(userlist).html("");
             for (n in result) {
-                $(userlist).append('<p>' + result[n].nick + '</p>');
-            }            
+                $(userlist).append('<p class="user">' + result[n].nick + '</p>');
+            }
+
             $(userlist + "-container").scrollbarPaper();
+            $(".user").click(function () {
+                $("#pms").append('<div class="tab"></div>');
+            });
 
             if (channel == selectedChannel) {
                 document.title = selectedChannel + " [" + result.length + "]";
             }
 
-            setTimeout(function () { refreshUsers(channel); }, 100);
+            //setTimeout(function () { refreshUsers(channel); }, 100);
         });
     }
 
@@ -144,7 +153,12 @@
     function refreshMessages() {
         $.get("Chat/GetMessages", function (result) {            
             for (n in result) {
-                write(result[n].message, result[n].destination, result[n].sender);
+                if (result[n].destination == currentNick) {
+                    $("#pms").append('<div class="tab">' + result[n].destination + '</div>');
+                }
+                else {
+                    write(result[n].message, result[n].destination, result[n].sender);
+                }
             }
 
             setTimeout(refreshMessages, 100);

@@ -28,6 +28,11 @@ namespace ASPOblig.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Index(string username, string password)
         {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                return View();
+            }
+
             if (db.Users.Where(u => u.nick == username).Count() < 1)
             {
                 db.Users.InsertOnSubmit(new User { nick = username, password = password });

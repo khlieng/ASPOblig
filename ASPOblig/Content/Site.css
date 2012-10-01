@@ -15,7 +15,7 @@ body {
 	left: 10px;
 	right: 220px;
 	top: 47px;
-	bottom: 60px;
+	bottom: 97px;
 	background: #222;	
 	overflow: auto;
 }
@@ -60,6 +60,25 @@ body {
 	background: #111;
 }
 
+#contacts {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	width: 180px;
+	padding: 5px 10px;
+	cursor: pointer;
+	font: 12px Open Sans, sans-serif;
+	background: #222;
+}
+
+#contacts b {
+	color: #FFB300;
+}
+
+#contacts:hover, #contacts.selected {
+	background: #111;
+}
+
 #login-container h2.error 
 {
     color: #555;
@@ -95,7 +114,7 @@ body {
 	position: absolute;
 	right: 10px;
 	top: 47px;
-	bottom: 60px;
+	bottom: 47px;
 	width: 200px;
 	background: #222;
 	overflow: hidden;
@@ -116,9 +135,9 @@ body {
 #entry {
 	position: absolute;
 	left: 10px;
-	right: 10px;
+	right: 220px;
 	height: 40px;
-	bottom: 10px;
+	bottom: 47px;
 	background: #222;
 	padding-left: 10px;
 	color: #FFF;
@@ -134,13 +153,14 @@ body {
 
 #login-container 
 {
+	width: 200px;
     margin: 0px auto;
-    width: 200px;
     margin-top: 100px;
 }
 
 #login-container h1 {
     font: 32px Oswald, sans-serif;
+	text-shadow: 0px 0px 5px rgba(0,0,0,0.4);
 }
 
 #login-container input 
@@ -223,6 +243,12 @@ body {
     padding: 4px 5px;
 }
 
+#pms {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+}
+
 #login-container input[type="submit"] {
 	font: 16px Oswald, sans-serif;
 	padding: 5px;
@@ -253,6 +279,26 @@ body {
 	box-shadow: inset 0px 2px 2px #4B6805;
 	-webkit-box-shadow: inset 0px 2px 2px #4B6805;
 	-moz-box-shadow: inset 0px 2px 2px #4B6805;
+}
+
+#logininfo {
+	color: #AAA;
+	background: #222;
+	padding: 15px 20px;
+	margin-left: 20px;
+	border-radius: 2px;
+	margin-top: 10px;
+}
+
+#logininfo h2 {
+	font: 18px Oswald, sans-serif;
+	color: #8DC210;	
+	text-shadow: 0px 0px 5px rgba(0,0,0,0.4);
+	margin-bottom: 5px;
+}
+
+#logininfo p {
+	margin-bottom: 5px;
 }
 
 div.scrollbarpaper-container
@@ -292,4 +338,9 @@ div.scrollbarpaper-drag-bottom
   position: absolute;
   bottom: 0;
   width: 100%;
+}
+
+.col200 {
+	float: left;
+	width: 200px;
 }
