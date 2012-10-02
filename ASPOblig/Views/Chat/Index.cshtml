@@ -13,12 +13,11 @@
 </div>
 <div id="userinfo">Du er <b>...</b></div>
 <div id="chats"></div>
-<input type="text" id="entry" />
-<div id="pms">
-    <div class="tab" id="test">bjarne</div>
-    <div class="tab">nils</div>
+<div id="entrywrap">
+    <input type="text" id="entry" />
 </div>
-<div id="contacts"><b>13</b> kontakter pålogget</div>
+<div id="pms"></div>
+<div id="contacts"><b>13</b> kontakter online</div>
 
 <script type="text/javascript">
     var selectedChannel;
@@ -28,6 +27,12 @@
         window.onbeforeunload = function () { 
             $.get("Chat/Logout"); 
         }
+
+        $(window).keyup(function(event) {
+            if (event.which == 13) {
+                $("#entry").focus();
+            }
+        });
 
         $("#addChannel").click(function () {
             $(this).hide();
@@ -71,8 +76,10 @@
             if (event.which == 13) {
                 if (selectedChannel != null) {
                     var message = $("#entry").val();
-                    $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
-                    write(message, selectedChannel, currentNick);
+                    if (message != "") {
+                        $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
+                        write(message, selectedChannel, currentNick);
+                    }
                 }
                 $("#entry").val("");
             }
@@ -94,19 +101,15 @@
             var userlist = "#users-" + channel;
             $(userlist).html("");
             for (n in result) {
-                $(userlist).append('<p class="user">' + result[n].nick + '</p>');
+                $(userlist).append('<p>' + result[n].nick + '</p>');
             }
-
-            $(userlist + "-container").scrollbarPaper();
-            $(".user").click(function () {
-                $("#pms").append('<div class="tab"></div>');
-            });
+            $(userlist + "-container").scrollbarPaper();            
 
             if (channel == selectedChannel) {
                 document.title = selectedChannel + " [" + result.length + "]";
             }
 
-            //setTimeout(function () { refreshUsers(channel); }, 100);
+            setTimeout(function () { refreshUsers(channel); }, 100);
         });
     }
 
@@ -154,7 +157,14 @@
         $.get("Chat/GetMessages", function (result) {            
             for (n in result) {
                 if (result[n].destination == currentNick) {
-                    $("#pms").append('<div class="tab">' + result[n].destination + '</div>');
+                    if ($("#chan-pm-" + result[n].sender).length < 1) {
+                        $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
+                        $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
+                        $("#chan-pm-" + result[n].sender).click(function() {
+                            showChannelPm(result[n].sender);
+                        });
+                    }
+                    write(result[n].message, "pm-" + result[n].sender, result[n].sender);
                 }
                 else {
                     write(result[n].message, result[n].destination, result[n].sender);
@@ -175,13 +185,21 @@
     }
 
     function showChannel(channel) {
-        $(".tab").removeClass("selected");
+        $(".tab, .tab-pm").removeClass("selected");
         $("#chan-" + channel).addClass("selected");
         $(".chat-container").hide();
         $("#" + channel + "-container").show();
         $("#" + channel + "-container").scrollbarPaper();
         $(".users-container").hide();
         $("#users-" + channel + "-container").show();
+    }
+
+    function showChannelPm(sender) {
+        $(".tab-pm, .tab").removeClass("selected");
+        $("#chan-pm-" + sender).addClass("selected");
+        $(".chat-container").hide();
+        $("#pm-" + sender + "-container").show();
+        $("#pm-" + sender + "-container").scrollbarPaper();
     }
 
     function fixScroll(elem) {

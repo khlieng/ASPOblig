@@ -133,11 +133,8 @@ body {
 }
 
 #entry {
-	position: absolute;
-	left: 10px;
-	right: 220px;
+	width: 100%;
 	height: 40px;
-	bottom: 47px;
 	background: #222;
 	padding-left: 10px;
 	color: #FFF;
@@ -149,6 +146,16 @@ body {
 #entry:focus, #login-container input:focus {
 	border: 1px solid #111;
 	height: 38px;
+	padding-left: 8px;
+}
+
+#entrywrap {
+	position: absolute;
+	left: 10px;
+	right: 220px;
+	height: 40px;
+	bottom: 47px;
+	margin-right: 10px;
 }
 
 #login-container 
@@ -182,7 +189,7 @@ body {
     padding: 0px 9px;
 }
 
-.tab 
+.tab, .tab-pm
 {
     font: 12px Open Sans, sans-serif;
 	color: #FFB300;
@@ -195,15 +202,15 @@ body {
 	font-weight: bold;
 }
 
-.tab:first-child {
+.tab:first-child, .tab-pm:first-child {
 	margin-left: 10px;
 }
 
-.tab:hover {
+.tab:hover, .tab-pm:hover {
 	background: #111;
 }
 
-.tab.selected 
+.tab.selected, .tab-pm.selected
 {
     background: #000;
 }
@@ -338,9 +345,4 @@ div.scrollbarpaper-drag-bottom
   position: absolute;
   bottom: 0;
   width: 100%;
-}
-
-.col200 {
-	float: left;
-	width: 200px;
 }
