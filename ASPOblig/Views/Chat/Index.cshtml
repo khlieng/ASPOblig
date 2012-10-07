@@ -2,22 +2,42 @@
     ViewBag.Title = "Dette er en chat";
 }
 
-<div id="channels">
+<div class="modal" id="modal-channel">
+        <h1>Kanaloppsett</h1>
+        <p> Åpen</p>
+        <p><input type="radio" name="type" value="private"> Privat</p>
+    </div>
+<div id="channels" class="noselect">
     <div id="addChannel" class="tab">></div>
     <input type="text" id="textbox-channel" />
 </div>
-<div id="userlists"></div>
+<div id="userlists" class="noselect"></div>
 <div id="menu">
     <p>Innstillinger</p>
     <p id="logout">Logg ut</p>
 </div>
-<div id="userinfo">Du er <b>...</b></div>
+<div id="userinfo" class="noselect">Du er <b>...</b></div>
 <div id="chats"></div>
 <div id="entrywrap">
     <input type="text" id="entry" />
 </div>
-<div id="pms"></div>
-<div id="contacts"><b>13</b> kontakter online</div>
+<div id="pms" class="noselect"></div>
+<div id="contacts" class="noselect">Venner<b style="float:right;">3</b></div>
+<div id="contactlist" class="noselect">  
+    <input type="text" id="textbox-contact" />
+    <div class="contact-category online">
+        <h2>Online</h2>
+        <p>Bjarne</p>
+        <p>Lefse</p>
+        <p>Herp</p>
+    </div>
+    <div class="contact-category offline">
+        <h2>Offline</h2>
+        <p>Derp</p>
+        <p>Nils</p>
+    </div>
+</div>
+<div id="modaloverlay"></div>
 
 <script type="text/javascript">
     var selectedChannel;
@@ -47,12 +67,16 @@
         });
 
         $("#userinfo").click(function () {
-            $("#menu").toggle();
-            if ($("#menu").is(":visible")) {
-                $("#userinfo").addClass("selected");
+            slideToggleMenu("#userinfo", "#menu");
+            if ($("#contactlist").is(":visible")) {
+                $("#contactlist").slideToggle("fast");
             }
-            else {
-                $("#userinfo").removeClass("selected");
+        });
+
+        $("#contacts").click(function() {
+            slideToggleMenu("#contacts", "#contactlist");
+            if ($("#menu").is(":visible")) {
+                $("#menu").slideToggle("fast");
             }
         });
 
@@ -85,6 +109,8 @@
             }
         });
 
+        $("#modaloverlay").click(hideModal);
+
         $.get("Chat/GetUserData", function (result) {
             currentNick = result;
             $("#userinfo").html("Du er <b>" + currentNick + "</b>");
@@ -105,8 +131,9 @@
             }
             $(userlist + "-container").scrollbarPaper();            
 
+            $("#" + channel + "-header .chat-usercount").html(result.length);
             if (channel == selectedChannel) {
-                document.title = selectedChannel + " [" + result.length + "]";
+                document.title = selectedChannel + " [" + result.length + "]";                
             }
 
             setTimeout(function () { refreshUsers(channel); }, 100);
@@ -117,7 +144,7 @@
         $.get("Chat/JoinChannel", { channel: channel });
         
         $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
-        $("#chats").append('<div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
+        $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
         $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
 
         selectedChannel = channel;
@@ -125,6 +152,10 @@
         fixScroll("#" + channel + "-container");        
         fixScroll("#users-" + channel + "-container");
         refreshUsers(channel);
+
+        $("#" + channel + "-header").click(function() {
+            showModal("modal-channel");
+        });
 
         $(".tab").click(function () {
             var channel = $(this).attr("id").split("-")[1];
@@ -148,13 +179,14 @@
 
         $("#chan-" + channel).fadeOut("fast", function () {
             $("#chan-" + channel).remove();
+            $("#" + channel + "-header").remove();
             $("#" + channel + "-container").remove();
             $("#users-" + channel + "-container").remove();
         });
     }
 
     function refreshMessages() {
-        $.get("Chat/GetMessages", function (result) {            
+        $.get("Chat/GetMessages", function (result) {
             for (n in result) {
                 if (result[n].destination == currentNick) {
                     if ($("#chan-pm-" + result[n].sender).length < 1) {
@@ -187,6 +219,8 @@
     function showChannel(channel) {
         $(".tab, .tab-pm").removeClass("selected");
         $("#chan-" + channel).addClass("selected");
+        $(".chat-header").hide();
+        $("#" + channel + "-header").show();
         $(".chat-container").hide();
         $("#" + channel + "-container").show();
         $("#" + channel + "-container").scrollbarPaper();
@@ -206,6 +240,26 @@
         $(elem).mousewheel(function(event, delta) {
             $(elem).scrollTop($(elem).scrollTop() - delta*100);
         });
+    }
+
+    function slideToggleMenu(button, menu) {
+        if ($(menu).is(":visible")) {
+            $(button).removeClass("selected");
+        }
+        else {
+            $(button).addClass("selected");            
+        }
+        $(menu).toggle();
+    }
+
+    function showModal(name) {
+        $("#modaloverlay").fadeIn();
+        $("#" + name).show();
+    }
+
+    function hideModal() {
+        $("#modaloverlay").hide();
+        $(".modal").hide();
     }
 
     function pad(n) {

@@ -14,7 +14,7 @@ body {
 	position: absolute;
 	left: 10px;
 	right: 220px;
-	top: 47px;
+	top: 88px;
 	bottom: 97px;
 	background: #222;	
 	overflow: auto;
@@ -25,11 +25,44 @@ body {
 }
 
 .chat b {
-	color: #FFB300;
+	color: #8DC210;
 }
 
 .chat p {
 	margin-bottom: 5px;
+}
+
+.chat-header {
+	position: absolute;
+	left: 10px;
+	top: 47px;
+	right: 220px;
+	height: 40px;
+	background: #222;
+	display: none;
+	cursor: pointer;
+}
+
+.chat-header.owned {
+	color: #8DC210;
+}
+
+.chat-header:hover {
+	background: #111;
+}
+
+.chat-header h2 {
+	font: 18px Oswald, sans-serif;
+	line-height: 40px;
+	margin-left: 10px;
+	float: left;
+}
+
+.chat-usercount {
+	float: right;
+	font: 18px Oswald, sans-serif;
+	line-height: 40px;
+	margin-right: 10px;
 }
 
 .message {
@@ -53,7 +86,7 @@ body {
 }
 
 #userinfo b {
-	color: #FFB300;
+	color: #8DC210;
 }
 
 #userinfo:hover, #userinfo.selected {
@@ -69,14 +102,32 @@ body {
 	cursor: pointer;
 	font: 12px Open Sans, sans-serif;
 	background: #222;
+	z-index: 3;
 }
 
 #contacts b {
-	color: #FFB300;
+	color: #8DC210;
 }
 
 #contacts:hover, #contacts.selected {
 	background: #111;
+}
+
+.contact-category h2 {
+	font: 18px Oswald, sans-serif;
+	margin: 5px 10px;
+}
+
+.contact-category.online h2 {
+	color: #8DC210;
+}
+
+.contact-category.offline h2 {
+	color: #555;
+}
+
+.contact-category.offline p {
+	color: #555;
 }
 
 #login-container h2.error 
@@ -95,19 +146,32 @@ body {
     background: #222;
     padding-top: 12px;
     padding-bottom: 5px;
-    border-bottom: 5px solid #FFB300;
+    border-bottom: 5px solid #8DC210;
     display: none;
     z-index: 2;
 }
 
-#menu p 
+#menu p, #contactlist p
 {
     padding: 5px 10px;
     cursor: pointer;
 }
 
-#menu p:hover {
+#menu p:hover, #contactlist p:hover {
     background: #111;
+}
+
+#contactlist {
+	position: absolute;
+	right: 10px;
+	bottom: 30px;
+	top: 47px;
+	width: 200px;
+	
+	border-top: 5px solid #8DC210;
+	display: none;
+	z-index: 2;
+	background: #222;
 }
 
 .users-container {
@@ -166,7 +230,7 @@ body {
 }
 
 #login-container h1 {
-    font: 32px Oswald, sans-serif;
+    font: 28px Oswald, sans-serif;
 	text-shadow: 0px 0px 5px rgba(0,0,0,0.4);
 }
 
@@ -192,14 +256,13 @@ body {
 .tab, .tab-pm
 {
     font: 12px Open Sans, sans-serif;
-	color: #FFB300;
+	color: #8DC210;
 	float: left;
 	margin: 10px 0px;
 	margin-right: 1px;
 	padding: 5px 10px;
 	background: #222;
 	cursor: pointer;
-	font-weight: bold;
 }
 
 .tab:first-child, .tab-pm:first-child {
@@ -229,6 +292,7 @@ body {
 
 #addChannel {
 	margin-left: 10px;
+	font-weight: bold;
 }
 
 #textbox-channel 
@@ -244,10 +308,22 @@ body {
 	display: none;
 }
 
-#textbox-channel:focus
+#textbox-channel:focus, #textbox-contact:focus
 {
     border: 1px solid #111;
     padding: 4px 5px;
+}
+
+#textbox-contact {
+	float: left;
+	margin: 10px;
+	padding: 5px 6px;
+	border: none;
+	outline: none;
+	background: #333;
+	color: #FFF;
+	font: 12px Open Sans, sans-serif;
+	width: 168px;
 }
 
 #pms {
@@ -345,4 +421,49 @@ div.scrollbarpaper-drag-bottom
   position: absolute;
   bottom: 0;
   width: 100%;
+}
+
+.noselect {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	user-select: none;
+}
+
+.modal {
+	position: absolute;
+	padding: 20px;
+	background: #222;
+	z-index: 6;
+	display: none;
+	left: 10px;
+	right: 220px;
+	top: 88px;
+	bottom: 97px;
+
+}
+
+.modal p {
+	font: 18px Oswald, sans-serif;
+	margin: 5px;
+}
+
+.modal h1 {
+	font: 24px Oswald, sans-serif;
+	text-align: center;
+}
+
+#modal-container {
+	margin: 0px auto;
+}
+
+#modaloverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.5);
+	z-index: 5;
+	display: none;
 }

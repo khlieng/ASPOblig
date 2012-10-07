@@ -54,8 +54,12 @@ namespace ASPOblig.Controllers
             DataClassesDataContext db = new DataClassesDataContext();
             int currentPos = (int)Session["currentPos"];
             Session["currentPos"] = db.Messages.Max(m => m.id);
-            
+
             var messages = db.Messages.Where(m => m.id > currentPos && db.Users.Where(u => u.nick == m.sender).First().id != (int)Session["userid"]);
+            /*while (messages.Count() < 1)
+            {
+                System.Threading.Thread.Sleep(10);
+            }*/
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 
