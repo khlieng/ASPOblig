@@ -59,7 +59,7 @@ namespace ASPOblig.Controllers
             /*while (messages.Count() < 1)
             {
                 System.Threading.Thread.Sleep(10);
-            }*/
+            }*/ 
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 

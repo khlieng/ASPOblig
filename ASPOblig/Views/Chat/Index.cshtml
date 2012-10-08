@@ -3,10 +3,36 @@
 }
 
 <div class="modal" id="modal-channel">
-        <h1>Kanaloppsett</h1>
-        <p> Åpen</p>
-        <p><input type="radio" name="type" value="private"> Privat</p>
+    <h1>Kanaloppsett</h1>
+    <div class="col">
+        <p><input id="radio-channelOpen" type="radio" name="type" value="open" checked="checked"> Offentlig</p>
+        <p><input id="radio-channelPrivate" type="radio" name="type" value="private"> Privat</p>
+        <div id="allowUsers">
+            <p>Tillatte brukere</p>
+            <p><input type="text" id="textbox-allowUser" /></p>
+            <p>
+                <select id="select-allowedUsers" size="8" multiple="multiple">
+                    <option value="bjarne">bjarne</option>
+                    <option value="herp">herp</option>
+                </select>
+            </p>
+        </div>
     </div>
+    <div class="col">
+        <p>Moderatorer</p>
+        <p><input type="text" id="textbox-addAdmin" />
+        <p>
+            <select id="select-admins" size="8" multiple="multiple">
+                <option value="bjarne">bjarne</option>
+                <option value="herp">herp</option>
+            </select>
+        </p>
+    </div>
+    <div class="modal-bar-bottom">
+        <button class="red">Slett kanal</button>
+        <button style="float:right;">Lagre</button>
+    </div>
+</div>
 <div id="channels" class="noselect">
     <div id="addChannel" class="tab">></div>
     <input type="text" id="textbox-channel" />
@@ -48,11 +74,11 @@
             $.get("Chat/Logout"); 
         }
 
-        $(window).keyup(function(event) {
+        /*$(window).keyup(function(event) {
             if (event.which == 13) {
                 $("#entry").focus();
             }
-        });
+        });*/
 
         $("#addChannel").click(function () {
             $(this).hide();
@@ -110,6 +136,31 @@
         });
 
         $("#modaloverlay").click(hideModal);
+
+        $("#textbox-allowUser").keypress(function (event) {
+            if (event.which == 13) {
+                var user = $(this).val();
+                if (user != "") {
+                    var allowedUser = $('<option value="herp">' + user + '</option>').appendTo("#select-allowedUsers");
+                    $(allowedUser).click(function() {
+                        $(this).remove();
+                    });
+                }
+                $("#textbox-allowUser").val("");
+            }
+        });
+
+        $("#radio-channelPrivate").click(function() {
+            $("#allowUsers").show();
+        });
+
+        $("#radio-channelOpen").click(function() {
+            $("#allowUsers").hide();
+        });
+
+        $("#select-allowedUsers option").click(function() {
+            $(this).remove();
+        });
 
         $.get("Chat/GetUserData", function (result) {
             currentNick = result;

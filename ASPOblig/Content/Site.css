@@ -308,13 +308,13 @@ body {
 	display: none;
 }
 
-#textbox-channel:focus, #textbox-contact:focus
+#textbox-channel:focus, #textbox-contact:focus, #textbox-allowUser:focus, #textbox-addAdmin:focus
 {
     border: 1px solid #111;
     padding: 4px 5px;
 }
 
-#textbox-contact {
+#textbox-contact, #textbox-allowUser, #textbox-addAdmin {
 	float: left;
 	margin: 10px;
 	padding: 5px 6px;
@@ -326,17 +326,37 @@ body {
 	width: 168px;
 }
 
+#textbox-allowUser, #textbox-addAdmin {
+	margin: 10px 0px;
+	width: 188px;
+}
+
+#select-allowedUsers, #select-admins {
+	width: 200px;
+	background: #333;
+	border: none;
+	color: #FFF;
+	font: 12px Open Sans, sans-serif;
+	margin-top: 10px 0px;
+	overflow: hidden;
+	outline: none;
+}
+
+#allowUsers {
+	display: none;
+	margin-top: 10px;
+}
+
 #pms {
 	position: absolute;
 	bottom: 0px;
 	left: 0px;
 }
 
-#login-container input[type="submit"] {
+#login-container input[type="submit"], button {
 	font: 16px Oswald, sans-serif;
 	padding: 5px;
 	width: 200px;
-	border: 1px solid #111;
 	color: #FFF;
 	cursor: pointer;
 
@@ -352,16 +372,29 @@ body {
 	text-shadow: 0px 1px 1px #4B6805;
 }
 
-#login-container input[type="submit"]:hover {
+#login-container input[type="submit"]:hover, button:hover {
 	border: 1px solid #4B6805;
 }
 
-#login-container input[type="submit"]:active {
+#login-container input[type="submit"]:active, button:active {
 	background: #8DC210;
 	border: 1px solid #4B6805;
 	box-shadow: inset 0px 2px 2px #4B6805;
 	-webkit-box-shadow: inset 0px 2px 2px #4B6805;
 	-moz-box-shadow: inset 0px 2px 2px #4B6805;
+}
+
+button.red {
+	box-shadow: inset 0px 1px 1px #FF4B4B;
+	-moz-box-shadow: inset 0px 1px 1px #FF4B4B;
+	-webkit-box-shadow: inset 0px 1px 1px #FF4B4B;
+	background: #F00;
+	border-color: #E50000;
+	text-shadow: 0px 1px 1px #7F0000;
+}
+
+button.red:hover {
+	border-color: #7F0000;
 }
 
 #logininfo {
@@ -432,7 +465,7 @@ div.scrollbarpaper-drag-bottom
 
 .modal {
 	position: absolute;
-	padding: 20px;
+	padding: 20px 0px;
 	background: #222;
 	z-index: 6;
 	display: none;
@@ -453,6 +486,16 @@ div.scrollbarpaper-drag-bottom
 	text-align: center;
 }
 
+.modal-bar-bottom {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	padding: 5px 10px;
+	height: 37px;
+	background: #111;
+}
+
 #modal-container {
 	margin: 0px auto;
 }
@@ -466,4 +509,15 @@ div.scrollbarpaper-drag-bottom
 	background: rgba(0,0,0,0.5);
 	z-index: 5;
 	display: none;
+}
+
+#modal-channel .col {	
+	width: 220px;
+	float: left;	
+	margin: 5px 0px;
+}
+
+#modal-channel .col p {
+	margin: 0px;
+	margin-left: 10px;
 }
