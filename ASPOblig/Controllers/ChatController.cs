@@ -68,13 +68,52 @@ namespace ASPOblig.Controllers
             return Content(Session["nick"].ToString());
         }
 
-        public void JoinChannel(string channel)
+        public ActionResult JoinChannel(string channel)
         {
+            string userType;
             DataClassesDataContext db = new DataClassesDataContext();
+            
             if (db.Channels.Where(c => c.name == channel).Count() < 1)
             {
-                db.Channels.InsertOnSubmit(new Channel { name = channel });
+                db.Channels.InsertOnSubmit(new Channel { name = channel, type = "open" });
                 db.SubmitChanges();
+
+                int channelId = db.Channels.Where(c => c.name == channel).First().id;
+                db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping { channelid = channelId, type = "owner", userid = (int)Session["userid"] });
+                db.SubmitChanges();
+
+                userType = "owner";
+            }
+            else
+            {
+                int channelId = db.Channels.Where(c => c.name == channel).First().id;
+                var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "mod");
+                var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
+                var channels2 = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "owner");
+                var users2 = db.Users.Where(u => channels2.Where(c => c.userid == u.id).Count() > 0);
+                if (users.Where(u => u.id == (int)Session["userid"]).Count() > 0)
+                {
+                    userType = "mod";
+                }
+                else if (users2.Where(u => u.id == (int)Session["userid"]).Count() > 0)
+                {
+                    userType = "owner";
+                }
+                else
+                {
+                    userType = "user";
+                }
+            }
+
+            if (db.Channels.Where(c => c.name == channel).First().type == "private")
+            {
+                int channelId = db.Channels.Where(c => c.name == channel).First().id;
+                var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "allowed");
+                var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
+                if (users.Where(u => u.id == (int)Session["userid"]).Count() < 1)
+                {
+                    //return Content("private");
+                }
             }
 
             db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping 
@@ -84,6 +123,8 @@ namespace ASPOblig.Controllers
                 type = "join" 
             });
             db.SubmitChanges();
+
+            return Content(userType);
         }
 
         public void LeaveChannel(string channel)
@@ -92,6 +133,69 @@ namespace ASPOblig.Controllers
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
             var mappings = db.UserChannelMappings.Where(ucm => ucm.userid == (int)Session["userid"] && ucm.channelid == channelId);
             db.UserChannelMappings.DeleteAllOnSubmit(mappings);
+            db.SubmitChanges();
+        }
+
+        public ActionResult GetChannelSettings(string channel)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+
+            string type = db.Channels.Where(c => c.name == channel).First().type;
+            int channelId = db.Channels.Where(c => c.name == channel).First().id;
+            var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "allowed");
+            var allowedUsers = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
+
+            var channels2 = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "mod");
+            var mods = db.Users.Where(u => channels2.Where(c => c.userid == u.id).Count() > 0);
+
+            var settings = new
+            {
+                type = type,
+                allowedUsers = allowedUsers,
+                mods = mods
+            };
+
+            return Json(settings, JsonRequestBehavior.AllowGet);
+        }
+
+        public void SetChannelSettings(string channel, string type, string[] allowed, string[] mods)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+
+            Channel ch = db.Channels.Where(c => c.name == channel).First();
+            ch.type = type;
+            UpdateModel(ch);
+
+            int channelId = ch.id;
+            var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type != "join" && m.type != "owner");
+            db.UserChannelMappings.DeleteAllOnSubmit(channels);
+
+            foreach (string allowedUser in allowed)
+            {
+                if (db.Users.Where(u => u.nick == allowedUser).Count() > 0)
+                {
+                    db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping
+                    {
+                        userid = db.Users.Where(u => u.nick == allowedUser).First().id,
+                        channelid = channelId,
+                        type = "allowed"
+                    });
+                }
+            }
+
+            foreach (string mod in mods)
+            {
+                if (db.Users.Where(u => u.nick == mod).Count() > 0)
+                {
+                    db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping
+                    {
+                        userid = db.Users.Where(u => u.nick == mod).First().id,
+                        channelid = channelId,
+                        type = "mod"
+                    });
+                }
+            }
+
             db.SubmitChanges();
         }
 
@@ -109,7 +213,7 @@ namespace ASPOblig.Controllers
             DataClassesDataContext db = new DataClassesDataContext();
             try
             {
-                var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"]);
+                var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"] && m.type == "join");
                 db.UserChannelMappings.DeleteAllOnSubmit(channels);
                 db.SubmitChanges();
             }
