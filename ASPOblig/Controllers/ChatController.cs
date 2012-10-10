@@ -42,20 +42,24 @@ namespace ASPOblig.Controllers
         /// </summary>
         /// <param name="message"></param>
         /// <param name="destination"></param>
-        public void SendMessage(string message, string destination)
+        public ActionResult SendMessage(string message, string destination)
         {
             DataClassesDataContext db = new DataClassesDataContext();
             if (!String.IsNullOrWhiteSpace(message))
             {
-                db.Messages.InsertOnSubmit(new Message
+                Message messageObj = new Message
                 {
                     sender = Session["nick"].ToString(),
                     destination = destination,
                     message = message,
                     datetime = DateTime.Now
-                });
+                };
+                db.Messages.InsertOnSubmit(messageObj);
                 db.SubmitChanges();
+
+                return Content(messageObj.id + "");
             }
+            return Content(-1 + "");
         }
 
         /// <summary>

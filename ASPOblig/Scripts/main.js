@@ -14,14 +14,14 @@ $(document).ready(function () {
         }
     });*/
 
-    //Brukes for å legge til en kanal >
+    // Brukes for å legge til en kanal
     $("#addChannel").click(function () {
         $(this).hide();
         $("#textbox-channel").show();
         $("#textbox-channel").focus();
     });
 
-    //Brukes for å logge ut, setter click event på logut knappen
+    // Brukes for å logge ut, setter click event på logut knappen
     $("#logout").click(function () {
         $.get("Chat/Logout", function () {
             location = "";
@@ -36,7 +36,7 @@ $(document).ready(function () {
         }
     });
 
-    //
+    // Viser kontaktlisten
     $("#contacts").click(function() {
         slideToggleMenu("#contacts", "#contactlist");
         if ($("#menu").is(":visible")) {
@@ -67,8 +67,10 @@ $(document).ready(function () {
                 var message = $("#entry").val();
                 if (message != "") {
                     var strippedMessage = message.replace(/(<([^>]+)>)/ig,"");
-                    $.get("Chat/SendMessage", { message: strippedMessage, destination: selectedChannel });
-                    write(strippedMessage, selectedChannel, currentNick);
+                    var messageElem = write("tmp", strippedMessage, selectedChannel, currentNick);
+                    $.get("Chat/SendMessage", { message: "msg:" + strippedMessage, destination: selectedChannel }, function(id) {
+                        messageElem.attr("id", "message-" + id);
+                    });
                 }
             }
             $("#entry").val("");
@@ -120,7 +122,8 @@ $(document).ready(function () {
     $("#select-admins option").click(function() {
         $(this).remove();
     });
-    //Lagre knappen under kanl instillingen.
+
+    // Sender kanaloppsettet til serveren
     $("#button-saveChannel").click(function() {
         var type = $('#modal-channel input[type="radio"]:checked').val();
         var allowedUsers = [];
@@ -150,7 +153,7 @@ $(document).ready(function () {
     });
 });
 
-//Oppdatrer siden for og holde trak på hvem som er logget inn i brukerlisten
+// Henter innloggede brukere for en kanal
 function refreshUsers(channel) {
     $.get("Chat/GetUsers", { channel: channel }, function (result) {
         var userlist = "#users-" + channel;
@@ -169,7 +172,7 @@ function refreshUsers(channel) {
     });
 }
 
-//Funksjon for va som skjer når man joiner en kanal.
+// Funksjon for hva som skjer når man joiner en kanal
 function joinChannel(channel) {
     $.get("Chat/JoinChannel", { channel: channel }, function(result) {
         if (result != "DENIED") {
@@ -213,7 +216,7 @@ function joinChannel(channel) {
      
 }
 
-//Hvordan clienten oppfører seg når man forlater en kanal
+// Forlater kanalen og fjerner den fra DOMen
 function leaveChannel(channel) {
     $.get("Chat/LeaveChannel", { channel: channel });
 
@@ -229,7 +232,7 @@ function leaveChannel(channel) {
     });
 }
 
-//brukes til og oppdatere meldinger som er sendt slik at de ser synkrone ut. dette gjøres hele tiden
+// Henter nye meldinger
 function refreshMessages() {
     $.get("Chat/GetMessages", function (result) {
         for (n in result) {
@@ -241,10 +244,21 @@ function refreshMessages() {
                         showChannelPm(result[n].sender);
                     });
                 }
-                write(result[n].message, "pm-" + result[n].sender, result[n].sender);
+                write("tmp", result[n].message, "pm-" + result[n].sender, result[n].sender);
             }
             else {
-                write(result[n].message, result[n].destination, result[n].sender);
+                if (result[n].message.indexOf("msg:") == 0) {
+                    write(result[n].id, result[n].message.substring(4), result[n].destination, result[n].sender);
+                }
+                else if (result[n].message.indexOf("del:") == 0) {
+                    var messageId = "message-" + result[n].message.split(":")[1];
+                    $("#" + messageId).html('<p id="' + messageId + '" class="deleted">Meldingen har blitt slettet av en moderator.</p>');
+                    setTimeout(function() { 
+                        $("#" + messageId).fadeOut("fast"), function() {
+                            $(this).remove();
+                        }
+                    }, 2000);
+                }
             }
         }
 
@@ -252,20 +266,31 @@ function refreshMessages() {
     });
 }
 
-//skriv meldingen til chatboxen
-function write(message, channel, nick) {
+// Skriver meldinger til chatboksen
+function write(id, message, channel, nick) {
     var date = new Date();
     var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
 
-    $("#" + channel).append('<p class="message"><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message);
-    $(".message").fadeIn("fast");
+    var elem = $('<p id="message-' + id + '" class="message"><span class="deleteMessage">x</span><span class="timestamp">[' + time + ']</span> <b>' + nick + '</b> ' + message + "</p>").appendTo("#" + channel);
+
+    // Sletter meldinger når du trykker på x
+    elem.find(".deleteMessage").click(function() {
+        var id = elem.attr("id").split("-")[1];
+        elem.fadeOut("fast", function () {
+            elem.remove();
+        });
+        $.get("Chat/SendMessage", { message: "del:" + id, destination: selectedChannel });
+    });
+
+    elem.fadeIn("fast");
     $("#" + channel + "-container").scrollTop($("#" + channel + "-container").prop("scrollHeight"));
+
+    return elem;
 }
 
 function writeSystem(message) {
-    write(message, selectedChannel, "SYSTEM");
+    write("tmp", message, selectedChannel, "SYSTEM");
 }
-
 
 function showChannel(channel) {
     $(".tab, .tab-pm").removeClass("selected");
@@ -287,6 +312,7 @@ function showChannelPm(sender) {
     $("#pm-" + sender + "-container").scrollbarPaper();
 }
 
+// Får scrolling til å fungere på elementer som bruker scrollbarPaper
 function fixScroll(elem) {
     $(elem).mousewheel(function(event, delta) {
         $(elem).scrollTop($(elem).scrollTop() - delta*100);
@@ -313,7 +339,7 @@ function hideModal() {
     $(".modal").hide();
 }
 
-//brukes til og hente ut instillinger som er satt for en spesifik kanal
+// Henter instillinger for en kanal og fyller dem inn i brukergrensesnittet
 function loadSettings(channel) {
     $.get("Chat/GetChannelSettings", { channel: channel }, function (result) {
         if (result.type == "open") {

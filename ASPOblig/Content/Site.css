@@ -69,8 +69,18 @@ body {
 	display: none;
 }
 
-.timestamp {
+.timestamp, .deleted {
 	color: #444;
+}
+
+.deleteMessage {
+	color: #FFF;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.deleteMessage:hover {
+	color: #F00;
 }
 
 #userinfo {
