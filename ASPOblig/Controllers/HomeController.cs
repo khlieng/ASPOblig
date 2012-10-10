@@ -10,9 +10,11 @@ namespace ASPOblig.Controllers
     {
         private static DataClassesDataContext db = new DataClassesDataContext();
 
+        
+        // Bruke som innloggings delen
         //
         // GET: /
-        
+        //sesion brukes for og holde sesesjonen når man er logget inn
         public ActionResult Index()
         {
             if (Session["login"] != null)
@@ -25,6 +27,7 @@ namespace ASPOblig.Controllers
             }
         }
 
+        //brukes for innlogging av bruker
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Index(string username, string password)
         {

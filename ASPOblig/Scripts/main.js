@@ -14,18 +14,21 @@ $(document).ready(function () {
         }
     });*/
 
+    //Brukes for å legge til en kanal >
     $("#addChannel").click(function () {
         $(this).hide();
         $("#textbox-channel").show();
         $("#textbox-channel").focus();
     });
 
+    //Brukes for å logge ut, setter click event på logut knappen
     $("#logout").click(function () {
         $.get("Chat/Logout", function () {
             location = "";
         });
     });
 
+    
     $("#userinfo").click(function () {
         slideToggleMenu("#userinfo", "#menu");
         if ($("#contactlist").is(":visible")) {
@@ -33,6 +36,7 @@ $(document).ready(function () {
         }
     });
 
+    //
     $("#contacts").click(function() {
         slideToggleMenu("#contacts", "#contactlist");
         if ($("#menu").is(":visible")) {
@@ -56,6 +60,7 @@ $(document).ready(function () {
         $("#addChannel").show();
     });
 
+    //brukes for å legge til en melding og sender den til rett destinasjon, menldingen lagres også i DB
     $("#entry").keypress(function (event) {
         if (event.which == 13) {
             if (selectedChannel != null) {
@@ -72,6 +77,7 @@ $(document).ready(function () {
 
     $("#modaloverlay").click(hideModal);
 
+    //Brukes til og velge hvem som skal ha tilgang til gitt kanal
     $("#textbox-allowUser").keypress(function (event) {
         if (event.which == 13) {
             var user = $(this).val();
@@ -85,6 +91,7 @@ $(document).ready(function () {
         }
     });
 
+    //brukes til og legge til en Administrator
     $("#textbox-addAdmin").keypress(function (event) {
         if (event.which == 13) {
             var mod = $(this).val();
@@ -113,7 +120,7 @@ $(document).ready(function () {
     $("#select-admins option").click(function() {
         $(this).remove();
     });
-
+    //Lagre knappen under kanl instillingen.
     $("#button-saveChannel").click(function() {
         var type = $('#modal-channel input[type="radio"]:checked').val();
         var allowedUsers = [];
@@ -143,6 +150,7 @@ $(document).ready(function () {
     });
 });
 
+//Oppdatrer siden for og holde trak på hvem som er logget inn i brukerlisten
 function refreshUsers(channel) {
     $.get("Chat/GetUsers", { channel: channel }, function (result) {
         var userlist = "#users-" + channel;
@@ -161,6 +169,7 @@ function refreshUsers(channel) {
     });
 }
 
+//Funksjon for va som skjer når man joiner en kanal.
 function joinChannel(channel) {
     $.get("Chat/JoinChannel", { channel: channel }, function(result) {
         if (result != "DENIED") {
@@ -204,6 +213,7 @@ function joinChannel(channel) {
      
 }
 
+//Hvordan clienten oppfører seg når man forlater en kanal
 function leaveChannel(channel) {
     $.get("Chat/LeaveChannel", { channel: channel });
 
@@ -219,6 +229,7 @@ function leaveChannel(channel) {
     });
 }
 
+//brukes til og oppdatere meldinger som er sendt slik at de ser synkrone ut. dette gjøres hele tiden
 function refreshMessages() {
     $.get("Chat/GetMessages", function (result) {
         for (n in result) {
@@ -241,6 +252,7 @@ function refreshMessages() {
     });
 }
 
+//skriv meldingen til chatboxen
 function write(message, channel, nick) {
     var date = new Date();
     var time = pad(date.getHours()) + ":" + pad(date.getMinutes());
@@ -253,6 +265,7 @@ function write(message, channel, nick) {
 function writeSystem(message) {
     write(message, selectedChannel, "SYSTEM");
 }
+
 
 function showChannel(channel) {
     $(".tab, .tab-pm").removeClass("selected");
@@ -300,6 +313,7 @@ function hideModal() {
     $(".modal").hide();
 }
 
+//brukes til og hente ut instillinger som er satt for en spesifik kanal
 function loadSettings(channel) {
     $.get("Chat/GetChannelSettings", { channel: channel }, function (result) {
         if (result.type == "open") {

@@ -23,6 +23,10 @@ namespace ASPOblig.Controllers
             }
         }
 
+        
+        /// <summary>
+        /// brukes til join av kananl
+        /// </summary>
         public void Join()
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -33,6 +37,11 @@ namespace ASPOblig.Controllers
             }
         }
 
+        /// <summary>
+        /// Sender meldinger, og lagrer de i databasen.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="destination"></param>
         public void SendMessage(string message, string destination)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -49,6 +58,10 @@ namespace ASPOblig.Controllers
             }
         }
 
+        /// <summary>
+        /// Brukes for og returnere meldinger, henter fra databasen.
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetMessages()
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -68,6 +81,13 @@ namespace ASPOblig.Controllers
             return Content(Session["nick"].ToString());
         }
 
+        /// <summary>
+        /// Brukes når man joiner en channel. 
+        /// lagrere setting for en kanal; Owner, Mode og om den er Private eller åpen for alle
+        /// Alt lagres i databasen
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         public ActionResult JoinChannel(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -134,6 +154,10 @@ namespace ASPOblig.Controllers
             return Content(userType);
         }
 
+        /// <summary>
+        /// Metode for og registrere at en bruker har forlatt en chatte kanal.
+        /// </summary>
+        /// <param name="channel"></param>
         public void LeaveChannel(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -143,6 +167,12 @@ namespace ASPOblig.Controllers
             db.SubmitChanges();
         }
 
+        /// <summary>
+        /// Metode brukes for og returnere kanal instillingen på klient siden 
+        ///
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         public ActionResult GetChannelSettings(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -165,6 +195,14 @@ namespace ASPOblig.Controllers
             return Json(settings, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Metoden brukers for og sette innstillinger på en gitt kanal.
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="type"></param>
+        /// <param name="allowed"></param>
+        /// <param name="mods"></param>
+        /// <returns></returns>
         public ActionResult SetChannelSettings(string channel, string type, string allowed, string mods)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -211,6 +249,11 @@ namespace ASPOblig.Controllers
             return Content("Mods: " + aMods[0] + ", Allowed: " + aAllowed.Length);
         }
 
+        /// <summary>
+        /// Returnerer brukeres som er i en gitt kanal
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         public ActionResult GetUsers(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
@@ -220,6 +263,10 @@ namespace ASPOblig.Controllers
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Brukes for og logge ut. 
+        /// Nick fjernes fra brukerlisten
+        /// </summary>
         public void Logout()
         {
             DataClassesDataContext db = new DataClassesDataContext();
