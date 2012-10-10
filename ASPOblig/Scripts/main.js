@@ -6,6 +6,8 @@ $(document).ready(function () {
         $.get("Chat/Logout"); 
     }
 
+    $.ajaxSettings.traditional = true;
+
     /*$(window).keyup(function(event) {
         if (event.which == 13) {
             $("#entry").focus();
@@ -59,8 +61,9 @@ $(document).ready(function () {
             if (selectedChannel != null) {
                 var message = $("#entry").val();
                 if (message != "") {
-                    $.get("Chat/SendMessage", { message: message, destination: selectedChannel });
-                    write(message, selectedChannel, currentNick);
+                    var strippedMessage = message.replace(/(<([^>]+)>)/ig,"");
+                    $.get("Chat/SendMessage", { message: strippedMessage, destination: selectedChannel });
+                    write(strippedMessage, selectedChannel, currentNick);
                 }
             }
             $("#entry").val("");
@@ -82,6 +85,19 @@ $(document).ready(function () {
         }
     });
 
+    $("#textbox-addAdmin").keypress(function (event) {
+        if (event.which == 13) {
+            var mod = $(this).val();
+            if (mod != "") {
+                var addedMod = $('<option value="' + mod + '">' + mod + '</option>').appendTo("#select-admins");
+                $(addedMod).click(function() {
+                    $(this).remove();
+                });
+            }
+            $("#textbox-addAdmin").val("");
+        }
+    })
+
     $("#radio-channelPrivate").click(function() {
         $("#allowUsers").show();
     });
@@ -91,6 +107,10 @@ $(document).ready(function () {
     });
 
     $("#select-allowedUsers option").click(function() {
+        $(this).remove();
+    });
+
+    $("#select-admins option").click(function() {
         $(this).remove();
     });
 
@@ -107,7 +127,9 @@ $(document).ready(function () {
             mods.push($(this).val());
         });
 
-        $.get("Chat/SetChannelSettings", { channel: selectedChannel, type: type, allowedUsers: allowedUsers, mods: mods });
+        $.get("Chat/SetChannelSettings", { channel: selectedChannel, type: type, allowed: allowedUsers.toString(), mods: mods.toString() }, function (result) {
+            writeSystem(result);
+        });
     });
 
     $.get("Chat/GetUserData", function (result) {
@@ -141,37 +163,42 @@ function refreshUsers(channel) {
 
 function joinChannel(channel) {
     $.get("Chat/JoinChannel", { channel: channel }, function(result) {
+        if (result != "DENIED") {
+            $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
+            $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
+            $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
 
-        $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
-        $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
-        $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
+            selectedChannel = channel;
+            showChannel(channel);
+            fixScroll("#" + channel + "-container");        
+            fixScroll("#users-" + channel + "-container");
+            refreshUsers(channel);
 
-        selectedChannel = channel;
-        showChannel(channel);
-        fixScroll("#" + channel + "-container");        
-        fixScroll("#users-" + channel + "-container");
-        refreshUsers(channel);
+            writeSystem(result);
 
-        write(result, selectedChannel, "SYSTEM");
+            $("#" + channel + "-header").click(function() {
+                if (result == "owner") {
+                    showModal("modal-channel");   
+                    loadSettings(channel);             
+                }
+            });
 
-        $("#" + channel + "-header").click(function() {
-            if (result == "owner") {
-                showModal("modal-channel");   
-                //loadSettings(channel);             
-            }
-        });
+            $(".tab").click(function () {
+                var channel = $(this).attr("id").split("-")[1];
+                if (channel != null) {
+                    selectedChannel = channel;
+                    showChannel(selectedChannel);
+                }
+            });
 
-        $(".tab").click(function () {
-            var channel = $(this).attr("id").split("-")[1];
-            if (channel != null) {
-                selectedChannel = channel;
-                showChannel(selectedChannel);
-            }
-        });
-
-        $(".tab .close").click(function() {
-            leaveChannel($(this).parent().attr("id").split("-")[1]);
-        }); 
+            $(".tab .close").click(function() {
+                leaveChannel($(this).parent().attr("id").split("-")[1]);
+            }); 
+        }
+        else
+        {
+            alert("GÅ VEKK!");
+        }
     }); 
 
      
@@ -223,6 +250,10 @@ function write(message, channel, nick) {
     $("#" + channel + "-container").scrollTop($("#" + channel + "-container").prop("scrollHeight"));
 }
 
+function writeSystem(message) {
+    write(message, selectedChannel, "SYSTEM");
+}
+
 function showChannel(channel) {
     $(".tab, .tab-pm").removeClass("selected");
     $("#chan-" + channel).addClass("selected");
@@ -271,13 +302,28 @@ function hideModal() {
 
 function loadSettings(channel) {
     $.get("Chat/GetChannelSettings", { channel: channel }, function (result) {
-        write(result.type, selectedChannel, "SYSTEM");
-
         if (result.type == "open") {
             $("#radio-channelOpen").attr("checked", "checked");
         }
         else {
             $("#radio-channelPrivate").attr("checked", "checked");
+        }
+
+        $("#select-allowedUsers").html("");
+        $("#select-admins").html("");
+
+        for (n in result.allowedUsers) {
+            var allowedUser = $('<option value="' + result.allowedUsers[n] + '">' + result.allowedUsers[n] + '</option>').appendTo("#select-allowedUsers");
+            $(allowedUser).click(function() {
+                $(this).remove();
+            });
+        }
+
+        for (n in result.mods) {
+            var mod = $('<option value="' + result.mods[n] + '">' + result.mods[n] + '</option>').appendTo("#select-admins");
+            $(mod).click(function() {
+                $(this).remove();
+            });
         }
     });
 }

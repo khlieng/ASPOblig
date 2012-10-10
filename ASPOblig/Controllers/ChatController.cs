@@ -70,8 +70,8 @@ namespace ASPOblig.Controllers
 
         public ActionResult JoinChannel(string channel)
         {
-            string userType;
             DataClassesDataContext db = new DataClassesDataContext();
+            string userType;
             
             if (db.Channels.Where(c => c.name == channel).Count() < 1)
             {
@@ -101,7 +101,14 @@ namespace ASPOblig.Controllers
                 }
                 else
                 {
-                    userType = "user";
+                    if (db.Channels.Where(c => c.name == channel).First().type == "private")
+                    {
+                        userType = "DENIED";
+                    }
+                    else
+                    {
+                        userType = "user";
+                    }
                 }
             }
 
@@ -143,10 +150,10 @@ namespace ASPOblig.Controllers
             string type = db.Channels.Where(c => c.name == channel).First().type;
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
             var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "allowed");
-            var allowedUsers = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
+            var allowedUsers = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0).Select(u => u.nick);
 
             var channels2 = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "mod");
-            var mods = db.Users.Where(u => channels2.Where(c => c.userid == u.id).Count() > 0);
+            var mods = db.Users.Where(u => channels2.Where(c => c.userid == u.id).Count() > 0).Select(u => u.nick);
 
             var settings = new
             {
@@ -158,7 +165,7 @@ namespace ASPOblig.Controllers
             return Json(settings, JsonRequestBehavior.AllowGet);
         }
 
-        public void SetChannelSettings(string channel, string type, string[] allowed, string[] mods)
+        public ActionResult SetChannelSettings(string channel, string type, string allowed, string mods)
         {
             DataClassesDataContext db = new DataClassesDataContext();
 
@@ -169,10 +176,14 @@ namespace ASPOblig.Controllers
             int channelId = ch.id;
             var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type != "join" && m.type != "owner");
             db.UserChannelMappings.DeleteAllOnSubmit(channels);
+            db.SubmitChanges();
 
-            foreach (string allowedUser in allowed)
+            string[] aAllowed = allowed.Split(',');
+            string[] aMods = mods.Split(',');
+            
+            foreach (string allowedUser in aAllowed)
             {
-                if (db.Users.Where(u => u.nick == allowedUser).Count() > 0)
+                if (!String.IsNullOrWhiteSpace(allowedUser) && db.Users.Where(u => u.nick == allowedUser).Count() > 0)
                 {
                     db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping
                     {
@@ -183,9 +194,9 @@ namespace ASPOblig.Controllers
                 }
             }
 
-            foreach (string mod in mods)
+            foreach (string mod in aMods)
             {
-                if (db.Users.Where(u => u.nick == mod).Count() > 0)
+                if (!String.IsNullOrWhiteSpace(mod) && db.Users.Where(u => u.nick == mod).Count() > 0)
                 {
                     db.UserChannelMappings.InsertOnSubmit(new UserChannelMapping
                     {
@@ -197,13 +208,14 @@ namespace ASPOblig.Controllers
             }
 
             db.SubmitChanges();
+            return Content("Mods: " + aMods[0] + ", Allowed: " + aAllowed.Length);
         }
 
         public ActionResult GetUsers(string channel)
         {
             DataClassesDataContext db = new DataClassesDataContext();
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
-            var channels = db.UserChannelMappings.Where(m => m.channelid == channelId);
+            var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "join");
             var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
             return Json(users, JsonRequestBehavior.AllowGet);
         }
