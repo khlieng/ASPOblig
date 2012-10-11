@@ -6,13 +6,13 @@ $(document).ready(function () {
         $.get("Chat/Logout"); 
     }
 
-    $.ajaxSettings.traditional = true;
-
-    /*$(window).keyup(function(event) {
-        if (event.which == 13) {
-            $("#entry").focus();
+    $(window).keyup(function(event) {
+        if (event.which == 67) {
+            $("#addChannel").hide();
+            $("#textbox-channel").show();
+            $("#textbox-channel").focus();
         }
-    });*/
+    });
 
     // Brukes for å legge til en kanal
     $("#addChannel").click(function () {
@@ -125,21 +125,8 @@ $(document).ready(function () {
 
     // Sender kanaloppsettet til serveren
     $("#button-saveChannel").click(function() {
-        var type = $('#modal-channel input[type="radio"]:checked').val();
-        var allowedUsers = [];
-        var mods = [];
-
-        $("#select-allowedUsers option").each(function() {
-            allowedUsers.push($(this).val());
-        });
-
-        $("#select-admins option").each(function() {
-            mods.push($(this).val());
-        });
-
-        $.get("Chat/SetChannelSettings", { channel: selectedChannel, type: type, allowed: allowedUsers.toString(), mods: mods.toString() }, function (result) {
-            writeSystem(result);
-        });
+        saveSettings();
+        hideModal();
     });
 
     $.get("Chat/GetUserData", function (result) {
@@ -149,6 +136,7 @@ $(document).ready(function () {
 
     $.get("Chat/Join", function () {
         joinChannel("Lobby");
+
         setTimeout(refreshMessages, 1000);
     });
 });
@@ -344,9 +332,11 @@ function loadSettings(channel) {
     $.get("Chat/GetChannelSettings", { channel: channel }, function (result) {
         if (result.type == "open") {
             $("#radio-channelOpen").attr("checked", "checked");
+            $("#allowUsers").hide();
         }
         else {
             $("#radio-channelPrivate").attr("checked", "checked");
+            $("#allowUsers").show();
         }
 
         $("#select-allowedUsers").html("");
@@ -365,6 +355,24 @@ function loadSettings(channel) {
                 $(this).remove();
             });
         }
+    });
+}
+
+function saveSettings() {
+    var type = $('#modal-channel input[type="radio"]:checked').val();
+    var allowedUsers = [];
+    var mods = [];
+
+    $("#select-allowedUsers option").each(function() {
+        allowedUsers.push($(this).val());
+    });
+
+    $("#select-admins option").each(function() {
+        mods.push($(this).val());
+    });
+
+    $.get("Chat/SetChannelSettings", { channel: selectedChannel, type: type, allowed: allowedUsers.toString(), mods: mods.toString() }, function (result) {
+        writeSystem(result);
     });
 }
 

@@ -127,23 +127,21 @@ namespace ASPOblig.Controllers
                 {
                     if (db.Channels.Where(c => c.name == channel).First().type == "private")
                     {
-                        userType = "DENIED";
+                        var channels3 = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "allowed");
+                        var users3 = db.Users.Where(u => channels3.Where(c => c.userid == u.id).Count() > 0);
+                        if (users3.Where(u => u.id == (int)Session["userid"]).Count() > 0)
+                        {
+                            userType = "user";
+                        }
+                        else
+                        {
+                            userType = "DENIED";
+                        }
                     }
                     else
                     {
                         userType = "user";
                     }
-                }
-            }
-
-            if (db.Channels.Where(c => c.name == channel).First().type == "private")
-            {
-                int channelId = db.Channels.Where(c => c.name == channel).First().id;
-                var channels = db.UserChannelMappings.Where(m => m.channelid == channelId && m.type == "allowed");
-                var users = db.Users.Where(u => channels.Where(c => c.userid == u.id).Count() > 0);
-                if (users.Where(u => u.id == (int)Session["userid"]).Count() < 1)
-                {
-                    //return Content("private");
                 }
             }
 
