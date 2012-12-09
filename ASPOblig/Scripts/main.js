@@ -160,13 +160,32 @@ function refreshUsers(channel) {
     });
 }
 
-// Funksjon for hva som skjer når man joiner en kanal
+//
+// Setter opp brukergrensesnittet for en kanal dersom brukeren har tilgang
+//
 function joinChannel(channel) {
     $.get("Chat/JoinChannel", { channel: channel }, function(result) {
         if (result != "DENIED") {
             $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
-            $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" class="chat"></div></div>');
+            $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" data-url="Chat/FileUpload" class="chat"></div></div>');
             $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
+
+            $("#" + channel).fileupload({
+                drop: function(e, data) {
+                    $.each(data.files, function(index, file) {
+                        writeSystem("Laster opp: " + file.name);
+                    });
+                },
+                done: function(e, data) {
+                    $.each(data.files, function(index, file) {
+                        writeSystem(file.name + " ferdig!");
+                    });
+                },
+                progressall: function(e, data) {
+                    var progress = data.loaded / data.total * 100;
+                    writeSystem(progress);
+                }
+            });
 
             selectedChannel = channel;
             showChannel(channel);
