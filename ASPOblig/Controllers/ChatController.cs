@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ASPOblig.Models;
 
 namespace ASPOblig.Controllers
 {
@@ -44,9 +45,15 @@ namespace ASPOblig.Controllers
         /// <param name="destination"></param>
         public ActionResult SendMessage(string message, string destination)
         {
+            System.Diagnostics.Debug.WriteLine(message);
+
             DataClassesDataContext db = new DataClassesDataContext();
             if (!String.IsNullOrWhiteSpace(message))
             {
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
+                {
+                    sw.WriteLine(message);
+                }
                 Message messageObj = new Message
                 {
                     sender = Session["nick"].ToString(),
@@ -280,6 +287,21 @@ namespace ASPOblig.Controllers
             }
             catch (Exception e) { }
             Session.Clear();
+        }
+
+        public void FileUpload()
+        {
+            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
+            {
+                sw.WriteLine(Request.Files[0].FileName);
+            }
+
+            foreach (string file in Request.Files)
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory;
+                
+                Request.Files[file].SaveAs(System.IO.Path.Combine(path, System.IO.Path.GetFileName(Request.Files[file].FileName)));
+            }
         }
     }
 }

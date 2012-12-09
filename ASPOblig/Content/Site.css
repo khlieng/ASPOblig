@@ -533,3 +533,9 @@ div.scrollbarpaper-drag-bottom
 	margin: 0px;
 	margin-left: 10px;
 }
+
+.profile-image 
+{
+    margin-left: 10px;
+    border: 3px solid #FFF;
+}
