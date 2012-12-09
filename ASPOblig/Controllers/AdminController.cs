@@ -10,7 +10,7 @@ namespace MvcApplication1asdasd.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Welcome to ASP.NET MVC!";
+            ViewBag.Message = "AdminShit";
 
             return View();
         }

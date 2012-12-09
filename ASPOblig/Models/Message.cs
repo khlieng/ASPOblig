@@ -7,5 +7,6 @@ namespace ASPOblig.Models
 {
     public partial class Message
     {
+       
     }
 }
