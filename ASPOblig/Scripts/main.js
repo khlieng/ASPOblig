@@ -2,11 +2,16 @@
 var currentNick;
 
 $(document).ready(function () {
-    window.onbeforeunload = function () { 
-        $.get("Chat/Logout"); 
+    window.onbeforeunload = function () {
+        $.get("Chat/Logout");
     }
 
-    $(window).keyup(function(event) {
+    /*$("body").click(function () {
+        alert("!");
+        sms("4745514151", "4741527246", "test");
+    });*/
+
+    $(window).keyup(function (event) {
         if (event.which == 67) {
             $("#addChannel").hide();
             $("#textbox-channel").show();
@@ -28,7 +33,7 @@ $(document).ready(function () {
         });
     });
 
-    
+
     $("#userinfo").click(function () {
         slideToggleMenu("#userinfo", "#menu");
         if ($("#contactlist").is(":visible")) {
@@ -37,7 +42,7 @@ $(document).ready(function () {
     });
 
     // Viser kontaktlisten
-    $("#contacts").click(function() {
+    $("#contacts").click(function () {
         slideToggleMenu("#contacts", "#contactlist");
         if ($("#menu").is(":visible")) {
             $("#menu").slideToggle("fast");
@@ -66,9 +71,9 @@ $(document).ready(function () {
             if (selectedChannel != null) {
                 var message = $("#entry").val();
                 if (message != "") {
-                    var strippedMessage = message.replace(/(<([^>]+)>)/ig,"");
+                    var strippedMessage = message.replace(/(<([^>]+)>)/ig, "");
                     var messageElem = write("tmp", strippedMessage, selectedChannel, currentNick);
-                    $.get("Chat/SendMessage", { message: "msg:" + strippedMessage, destination: selectedChannel }, function(id) {
+                    $.get("Chat/SendMessage", { message: "msg:" + strippedMessage, destination: selectedChannel }, function (id) {
                         messageElem.attr("id", "message-" + id);
                     });
                 }
@@ -85,7 +90,7 @@ $(document).ready(function () {
             var user = $(this).val();
             if (user != "") {
                 var allowedUser = $('<option value="' + user + '">' + user + '</option>').appendTo("#select-allowedUsers");
-                $(allowedUser).click(function() {
+                $(allowedUser).click(function () {
                     $(this).remove();
                 });
             }
@@ -99,7 +104,7 @@ $(document).ready(function () {
             var mod = $(this).val();
             if (mod != "") {
                 var addedMod = $('<option value="' + mod + '">' + mod + '</option>').appendTo("#select-admins");
-                $(addedMod).click(function() {
+                $(addedMod).click(function () {
                     $(this).remove();
                 });
             }
@@ -107,30 +112,31 @@ $(document).ready(function () {
         }
     })
 
-    $("#radio-channelPrivate").click(function() {
+    $("#radio-channelPrivate").click(function () {
         $("#allowUsers").show();
     });
 
-    $("#radio-channelOpen").click(function() {
+    $("#radio-channelOpen").click(function () {
         $("#allowUsers").hide();
     });
 
-    $("#select-allowedUsers option").click(function() {
+    $("#select-allowedUsers option").click(function () {
         $(this).remove();
     });
 
-    $("#select-admins option").click(function() {
+    $("#select-admins option").click(function () {
         $(this).remove();
     });
 
     // Sender kanaloppsettet til serveren
-    $("#button-saveChannel").click(function() {
+    $("#button-saveChannel").click(function () {
         saveSettings();
         hideModal();
     });
 
     $.get("Chat/GetUserData", function (result) {
         currentNick = result;
+        $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/' + currentNick + '.png">');
         $("#userinfo").html("Du er <b>" + currentNick + "</b>");
     });
 
@@ -140,6 +146,10 @@ $(document).ready(function () {
         setTimeout(refreshMessages, 1000);
     });
 });
+
+function sms(to, from, message) {
+    $.post("/pswin/sms/sendsms", { RCV: to, SND: from, TXT: message });
+}
 
 // Henter innloggede brukere for en kanal
 function refreshUsers(channel) {
