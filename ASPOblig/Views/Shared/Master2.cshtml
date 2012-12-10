@@ -20,22 +20,30 @@
 
 <body>
 <div id="admin-menu">
-    </p>
-    <ul>
-        <li>@Html.ActionLink("Users", "Index", new { controller = "Users" })</li>
+        </p>
+        <ul>
+            <li>@Html.ActionLink("Users", "Index", new { controller = "Users" })</li>
+            </ul>
+        <ul>
+             <li>@Html.ActionLink("Channels", "Index", new { controller = "Channel" })</li>
+             </ul>
+        <ul>
+             <li>@Html.ActionLink("Messages", "Index", new { controller = "Messages" })</li>
+             </ul>  
+        </p>
+        <br />
+        <ul>
+            <li>@Html.ActionLink("Back to Chat", "Index", new { controller = "Chat" })</li>
         </ul>
-    <ul>
-         <li>@Html.ActionLink("Channels", "Index", new { controller = "Channel" })</li>
-         </ul>
-    <ul>
-         <li>@Html.ActionLink("Messages", "Index", new { controller = "Messages" })</li>
-         </ul>  
-    </p>
-    <br />
-    <ul>
-        <li>@Html.ActionLink("Back to Chat", "Index", new { controller = "Chat" })</li>
-    </ul>
-    </div>
+        </div>
+<div id="adminpanel">
+    
+   
+    
     @RenderBody()
+    </div>
+     <div id="footer">
+            ASP Oblig2, Chater pro v1.0
+        </div>
 </body>
 </html>

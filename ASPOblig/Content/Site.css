@@ -9,13 +9,35 @@ h1
     margin-bottom:0;
 
 }
+#adminpanel
+{
+    position: fixed;
+    left: 100px;
+    top: 0;
+    bottom: 17px;
+    overflow: auto;
+    
+}
+
+#footer
+{
+    background-color:#FFA500;
+    clear:both;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align:center;
+}
 
 #admin-menu
 {
     background-color:#FFD700;
-    height:200px;
+   
     width:100px;
     float:left;
+    position: fixed;
+    height: 100%;
 }
 
 body {
