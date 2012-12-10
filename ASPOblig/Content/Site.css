@@ -171,6 +171,11 @@ body {
     background: #111;
 }
 
+#menu a {
+	text-decoration: none;
+	color: #FFF;
+}
+
 #contactlist {
 	position: absolute;
 	right: 10px;

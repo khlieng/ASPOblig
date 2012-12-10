@@ -6,10 +6,10 @@ $(document).ready(function () {
         $.get("Chat/Logout");
     }
 
-    /*$("body").click(function () {
-        alert("!");
-        sms("4745514151", "4741527246", "test");
-    });*/
+    //$("body").click(function () {
+    //    alert("!");
+        //sms("4745514151", "AFRIKA", "test");
+    //});
 
     $(window).keyup(function (event) {
         if (event.which == 67) {
@@ -170,26 +170,29 @@ function sms(to, from, message) {
 }
 
 // Henter innloggede brukere for en kanal
-function refreshUsers(channel) {
+function getUsers(channel) {
     $.get("Chat/GetUsers", { channel: channel }, function (result) {
         var userlist = "#users-" + channel;
-        $(userlist).html("");
         for (n in result) {
             $(userlist).append('<p id="user-' + channel + '-' + result[n].nick + '">' + result[n].nick + '</p>');
             $('#user-' + channel + '-' + result[n].nick).click(function () {
-                alert("NEGER");
-
+                if ($("#chan-pm-" + result[n].nick).length < 1) {
+                    $("#pms").append('<div id="chan-pm-' + result[n].nick + '" class="tab-pm">' + result[n].nick + '</div>');                        
+                    $("#chats").append('<div id="pm-' + result[n].nick + '-container" class="chat-container"><div id="pm-' + result[n].nick + '" class="chat"></div></div>');
+                    $("#chan-pm-" + result[n].nick).click(function() {
+                        selectedChannel = "pm-" + result[n].nick;
+                        showChannelPm(result[n].nick);
+                    });
+                    selectedChannel = "pm-" + result[n].sender;
+                    showChannelPm(result[n].sender);
+                }
             });
         }
-
-        $(userlist + "-container").scrollbarPaper();
 
         $("#" + channel + "-header .chat-usercount").html(result.length);
         if (channel == selectedChannel) {
             document.title = selectedChannel + " [" + result.length + "]";
         }
-
-        setTimeout(function () { refreshUsers(channel); }, 100);
     });
 }
 
@@ -225,7 +228,8 @@ function joinChannel(channel) {
             showChannel(channel);
             fixScroll("#" + channel + "-container");        
             fixScroll("#users-" + channel + "-container");
-            refreshUsers(channel);
+            $('#users-' + channel + '-container').scrollbarPaper();
+            getUsers(channel);
 
             writeSystem(result);
 
@@ -287,6 +291,7 @@ function refreshMessages() {
                     $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
                     $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
                     $("#chan-pm-" + result[n].sender).click(function() {
+                        selectedChannel = "pm-" + result[n].sender;
                         showChannelPm(result[n].sender);
                     });
                 }
@@ -305,6 +310,33 @@ function refreshMessages() {
                         }
                     }, 2000);
                 }
+                else if(result[n].message.indexOf("join:") == 0) {
+                    var nick = result[n].message.split(":")[1];
+                    var userlist = "#users-" + result[n].destination;
+
+                    write(-1, " har blitt med i kanalen.", result[n].destination, nick);
+
+                    $(userlist).append('<p id="user-' + result[n].destination + '-' + nick + '">' + nick + '</p>');
+                    $('#user-' + result[n].destination + '-' + nick).click(function () {
+                        if ($("#chan-pm-" + result[n].sender).length < 1) {
+                            $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
+                            $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
+                            $("#chan-pm-" + result[n].sender).click(function() {
+                                selectedChannel = "pm-" + result[n].sender;
+                                showChannelPm(result[n].sender);
+                            });
+                            selectedChannel = "pm-" + result[n].sender;
+                            showChannelPm(result[n].sender);
+                        }           
+                    });
+                }
+                else if(result[n].message.indexOf("leave:") == 0) {
+                    var nick = result[n].message.split(":")[1];
+
+                    write(-1, " har forlatt kanalen.", result[n].destination, nick);
+
+                    $("#user-" + result[n].destination + "-" + nick).remove();
+                }       
             }
         }
 

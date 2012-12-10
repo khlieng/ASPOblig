@@ -80,10 +80,6 @@ namespace ASPOblig.Controllers
             Session["currentPos"] = db.Messages.Max(m => m.id);
 
             var messages = db.Messages.Where(m => m.id > currentPos && db.Users.Where(u => u.nick == m.sender).First().id != (int)Session["userid"]);
-            /*while (messages.Count() < 1)
-            {
-                System.Threading.Thread.Sleep(10);
-            }*/ 
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 
@@ -158,6 +154,15 @@ namespace ASPOblig.Controllers
                 channelid = db.Channels.Where(c => c.name == channel).First().id, 
                 type = "join" 
             });
+
+            db.Messages.InsertOnSubmit(new Message
+            {
+                sender = Session["nick"].ToString(),
+                destination = channel,
+                datetime = DateTime.Now,
+                message = "join:" + Session["nick"]
+            });
+
             db.SubmitChanges();
 
             return Content(userType);
@@ -173,6 +178,15 @@ namespace ASPOblig.Controllers
             int channelId = db.Channels.Where(c => c.name == channel).First().id;
             var mappings = db.UserChannelMappings.Where(ucm => ucm.userid == (int)Session["userid"] && ucm.channelid == channelId);
             db.UserChannelMappings.DeleteAllOnSubmit(mappings);
+
+            db.Messages.InsertOnSubmit(new Message
+            {
+                sender = Session["nick"].ToString(),
+                destination = channel,
+                datetime = DateTime.Now,
+                message = "leave:" + Session["nick"]
+            });
+
             db.SubmitChanges();
         }
 
@@ -283,6 +297,18 @@ namespace ASPOblig.Controllers
             {
                 var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"] && m.type == "join");
                 db.UserChannelMappings.DeleteAllOnSubmit(channels);
+
+                foreach (var mapping in channels)
+                {
+                    db.Messages.InsertOnSubmit(new Message
+                    {
+                        sender = Session["nick"].ToString(),
+                        destination = GetChannelName(mapping.channelid),
+                        datetime = DateTime.Now,
+                        message = "leave:" + Session["nick"]
+                    });
+                }
+
                 db.SubmitChanges();
             }
             catch (Exception e) { }
@@ -315,6 +341,12 @@ namespace ASPOblig.Controllers
                     }
                     break;
             }
+        }
+
+        private string GetChannelName(int id)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+            return db.Channels.Where(c => c.id == id).First().name;
         }
     }
 }
