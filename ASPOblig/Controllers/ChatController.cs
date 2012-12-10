@@ -289,18 +289,31 @@ namespace ASPOblig.Controllers
             Session.Clear();
         }
 
-        public void FileUpload()
+        public void FileUpload(String type)
         {
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
+            /*using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
             {
                 sw.WriteLine(Request.Files[0].FileName);
-            }
+            }*/
 
-            foreach (string file in Request.Files)
-            {
-                string path = AppDomain.CurrentDomain.BaseDirectory;
+            switch (type) {
+                case "upload":
+                    foreach (string file in Request.Files)
+                    {
+                        string path = AppDomain.CurrentDomain.BaseDirectory;
                 
-                Request.Files[file].SaveAs(System.IO.Path.Combine(path, System.IO.Path.GetFileName(Request.Files[file].FileName)));
+                        Request.Files[file].SaveAs(System.IO.Path.Combine(path, System.IO.Path.GetFileName(Request.Files[file].FileName)));
+                    }
+                    break;
+
+                case "profilepic":
+                    foreach (string file in Request.Files)
+                    {
+                        string path = AppDomain.CurrentDomain.BaseDirectory;
+                
+                        Request.Files[file].SaveAs(System.IO.Path.Combine(path, "img/profilepix/", System.IO.Path.GetFileName(Request.Files[file].FileName)));
+                    }
+                    break;
             }
         }
     }
