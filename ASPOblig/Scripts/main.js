@@ -135,8 +135,13 @@ $(document).ready(function () {
     });
 
     $.get("Chat/GetUserData", function (result) {
-        currentNick = result;
+        currentNick = result.nick;
+        alert(result.type);
+        if (result.type == "admin") {
+            $("#menu p:first-child").before('<a href="Admin"><p>Admin</p></a>');
+        }  
         $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/' + currentNick + '.png">');
+        
         $("#userinfo").html("Du er <b>" + currentNick + "</b>");
 
         $(".profile-image").fileupload({

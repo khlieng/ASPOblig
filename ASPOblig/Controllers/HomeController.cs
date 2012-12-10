@@ -48,6 +48,7 @@ namespace ASPOblig.Controllers
                 Session["login"] = true;
                 Session["nick"] = username;
                 Session["userid"] = db.Users.Where(u => u.nick == username).First().id;
+                Session["type"] = db.Users.Where(u => u.nick == username).First().type;
 
                 return RedirectToAction("Index", "Chat");
             }
