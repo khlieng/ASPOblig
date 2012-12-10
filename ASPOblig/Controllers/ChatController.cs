@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ASPOblig.Models;
+using System.IO;
 
 namespace ASPOblig.Controllers
 {
@@ -85,7 +86,14 @@ namespace ASPOblig.Controllers
 
         public ActionResult GetUserData()
         {
-            return Content(Session["nick"].ToString());
+            using (StreamWriter sw = new StreamWriter(System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "test.txt")))
+            {
+                sw.WriteLine(Session["type"]);
+            }
+            return Json(new { 
+                nick = Session["nick"].ToString(),
+                type = Session["type"] == null ? String.Empty : Session["type"].ToString()
+            }, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
