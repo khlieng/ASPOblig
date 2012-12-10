@@ -175,13 +175,18 @@ function refreshUsers(channel) {
         var userlist = "#users-" + channel;
         $(userlist).html("");
         for (n in result) {
-            $(userlist).append('<p>' + result[n].nick + '</p>');
+            $(userlist).append('<p id="user-' + channel + '-' + result[n].nick + '">' + result[n].nick + '</p>');
+            $('#user-' + channel + '-' + result[n].nick).click(function () {
+                alert("NEGER");
+
+            });
         }
-        $(userlist + "-container").scrollbarPaper();            
+
+        $(userlist + "-container").scrollbarPaper();
 
         $("#" + channel + "-header .chat-usercount").html(result.length);
         if (channel == selectedChannel) {
-            document.title = selectedChannel + " [" + result.length + "]";                
+            document.title = selectedChannel + " [" + result.length + "]";
         }
 
         setTimeout(function () { refreshUsers(channel); }, 100);
@@ -242,15 +247,20 @@ function joinChannel(channel) {
             $(".tab .close").click(function() {
                 leaveChannel($(this).parent().attr("id").split("-")[1]);
             }); 
+
+           
         }
         else
         {
             alert("GÅ VEKK!");
         }
-    }); 
+    });
 
-     
+
 }
+
+
+
 
 // Forlater kanalen og fjerner den fra DOMen
 function leaveChannel(channel) {
@@ -321,8 +331,17 @@ function write(id, message, channel, nick) {
     elem.fadeIn("fast");
     $("#" + channel + "-container").scrollTop($("#" + channel + "-container").prop("scrollHeight"));
 
+    //private message 
+   
     return elem;
 }
+
+
+
+
+
+
+
 
 function writeSystem(message) {
     write("tmp", message, selectedChannel, "SYSTEM");
