@@ -7,6 +7,16 @@ h1
 { 
     margin-bottom:0;
 }
+
+#admin a {
+	text-decoration: none;
+	color: #AAA;
+}
+
+#admin a:hover {
+	color: #FFA500;
+}
+
 #adminpanel
 {
     position: fixed;
@@ -16,9 +26,14 @@ h1
     overflow: auto; 
 }
 
+.th-message {
+	width: 70%;
+}
+
 #footer
 {
     background-color:#FFA500;
+    color: #000;
     clear:both;
     position: fixed;
     left: 0;
@@ -35,6 +50,15 @@ h1
     float:left;
     position: fixed;
     height: 100%;
+}
+
+#admin-menu a {
+	color: #000;
+}
+
+#admin-menu a:hover {
+	color: #000;
+	font-weight: bold;
 }
 
 body {
