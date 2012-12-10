@@ -1,11 +1,11 @@
-﻿@model IEnumerable<ASPOblig.Models.Channel>
+﻿@model IEnumerable<ASPOblig.Models.User>
 
 @{
-    ViewBag.Title = "Channel";
+    ViewBag.Title = "Users";
     Layout = "~/Views/Shared/Master2.cshtml";
 }
 
-<h2>Channels</h2>
+<h2>Users</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -13,7 +13,10 @@
 <table>
     <tr>
         <th>
-            name
+            nick
+        </th>
+        <th>
+            password
         </th>
         <th>
             type
@@ -24,7 +27,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.name)
+            @Html.DisplayFor(modelItem => item.nick)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.password)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.type)

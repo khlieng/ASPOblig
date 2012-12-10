@@ -1,4 +1,4 @@
-﻿@model ASPOblig.Models.Channel
+﻿@model ASPOblig.Models.User
 
 @{
     ViewBag.Title = "Details";
@@ -8,11 +8,16 @@
 <h2>Details</h2>
 
 <fieldset>
-    <legend>Channel</legend>
+    <legend>User</legend>
 
-    <div class="display-label">name</div>
+    <div class="display-label">nick</div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.name)
+        @Html.DisplayFor(model => model.nick)
+    </div>
+
+    <div class="display-label">password</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.password)
     </div>
 
     <div class="display-label">type</div>

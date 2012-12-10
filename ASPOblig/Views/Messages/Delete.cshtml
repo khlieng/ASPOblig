@@ -1,0 +1,39 @@
+﻿@model ASPOblig.Models.Message
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/Master2.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>Message</legend>
+
+    <div class="display-label">sender</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.sender)
+    </div>
+
+    <div class="display-label">destination</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.destination)
+    </div>
+
+    <div class="display-label">message</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.message)
+    </div>
+
+    <div class="display-label">datetime</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.datetime)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}
