@@ -138,6 +138,24 @@ $(document).ready(function () {
         currentNick = result;
         $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/' + currentNick + '.png">');
         $("#userinfo").html("Du er <b>" + currentNick + "</b>");
+
+        $(".profile-image").fileupload({
+            drop: function (e, data) {
+                $.each(data.files, function (index, file) {
+                    writeSystem("Laster opp: " + file.name);
+                });
+            },
+            done: function (e, data) {
+                $.each(data.files, function (index, file) {
+                    writeSystem(file.name + " ferdig!");
+                });
+            },
+            progressall: function (e, data) {
+                var progress = data.loaded / data.total * 100;
+                writeSystem(progress);
+            },
+            formData: { type: "profilepic" }
+        });
     });
 
     $.get("Chat/Join", function () {
@@ -199,7 +217,8 @@ function joinChannel(channel) {
                 progressall: function(e, data) {
                     var progress = data.loaded / data.total * 100;
                     writeSystem(progress);
-                }
+                },
+                formData: { type: "upload" }
             });
 
             selectedChannel = channel;
