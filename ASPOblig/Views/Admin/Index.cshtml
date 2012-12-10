@@ -1,8 +1,19 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Admin Panel";
 }
 
 <h2>@ViewBag.Message</h2>
-<p>
-    ADMIN. FETTSHITN!
-</p>
+    <h1>Administration Panel</h1>
+    <p>
+  
+     <ul>
+        <li>@Html.ActionLink("User", "Index", new { controller = "Users" })</li>
+    </ul>
+    <ul>
+         <li>@Html.ActionLink("Channels", "Index", new { controller = "Channel" })</li>
+      </ul>
+      <ul>
+         <li>@Html.ActionLink("Messages", "Index", new { controller = "Messages" })</li>
+      </ul>  
+      
+    </p>

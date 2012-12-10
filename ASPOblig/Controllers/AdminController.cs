@@ -10,7 +10,7 @@ namespace MvcApplication1asdasd.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "AdminShit";
+            ViewBag.Message = "";
 
             return View();
         }

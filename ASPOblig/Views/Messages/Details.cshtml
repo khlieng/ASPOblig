@@ -1,0 +1,35 @@
+﻿@model ASPOblig.Models.Message
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Message</legend>
+
+    <div class="display-label">sender</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.sender)
+    </div>
+
+    <div class="display-label">destination</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.destination)
+    </div>
+
+    <div class="display-label">message</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.message)
+    </div>
+
+    <div class="display-label">datetime</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.datetime)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
