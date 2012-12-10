@@ -269,8 +269,6 @@ function joinChannel(channel) {
 }
 
 
-
-
 // Forlater kanalen og fjerner den fra DOMen
 function leaveChannel(channel) {
     $.get("Chat/LeaveChannel", { channel: channel });
