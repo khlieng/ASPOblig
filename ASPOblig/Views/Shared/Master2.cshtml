@@ -22,7 +22,7 @@
 <div id="admin-menu">
     </p>
     <ul>
-        <li>@Html.ActionLink("User", "Index", new { controller = "Users" })</li>
+        <li>@Html.ActionLink("Users", "Index", new { controller = "Users" })</li>
         </ul>
     <ul>
          <li>@Html.ActionLink("Channels", "Index", new { controller = "Channel" })</li>
@@ -31,6 +31,10 @@
          <li>@Html.ActionLink("Messages", "Index", new { controller = "Messages" })</li>
          </ul>  
     </p>
+    <br />
+    <ul>
+        <li>@Html.ActionLink("Back to Chat", "Index", new { controller = "Chat" })</li>
+    </ul>
     </div>
     @RenderBody()
 </body>
