@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<ASPOblig.Models.Message>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Messages";
+    Layout = "~/Views/Shared/Master2.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Messages</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")

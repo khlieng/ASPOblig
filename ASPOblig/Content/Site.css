@@ -3,6 +3,25 @@
 	margin: 0px;
 }
 
+h1
+{ 
+   
+    margin-bottom:0;
+
+}
+
+
+
+#admin-menu
+{
+    background-color:#FFD700;
+    height:200px;
+    width:100px;
+    float:left;
+}
+
+
+
 body {
 	background: #333;
 	color: #FFF;
