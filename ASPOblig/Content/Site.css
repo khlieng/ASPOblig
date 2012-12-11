@@ -5,9 +5,7 @@
 
 h1
 { 
-   
     margin-bottom:0;
-
 }
 
 #admin a {
@@ -25,8 +23,7 @@ h1
     left: 100px;
     top: 0;
     bottom: 17px;
-    overflow: auto;
-    
+    overflow: auto; 
 }
 
 .th-message {
