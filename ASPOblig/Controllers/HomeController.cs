@@ -9,7 +9,7 @@ namespace ASPOblig.Controllers
 {
     public class HomeController : Controller
     {
-        private static DataClassesDataContext db = new DataClassesDataContext();
+        //private static DataClassesDataContext db = new DataClassesDataContext();
 
         
         // Bruke som innloggings delen
@@ -32,6 +32,7 @@ namespace ASPOblig.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Index(string username, string password)
         {
+            DataClassesDataContext db = new DataClassesDataContext();
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 return View();
