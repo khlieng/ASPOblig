@@ -26,6 +26,13 @@ h1
     overflow: auto; 
 }
 
+#searchChannelsAdmin 
+{
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
 .th-message {
 	width: 70%;
 }

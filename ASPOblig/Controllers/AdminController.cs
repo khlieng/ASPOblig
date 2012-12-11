@@ -12,12 +12,21 @@ namespace ASPOblig.Controllers
         {
             ViewBag.Message = "";
 
-            return View();
+            if (Session["type"] != "admin")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public ActionResult About()
         {
-            return View();
+            
+                return View();
+            
         }
     }
 }

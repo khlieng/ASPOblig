@@ -18,6 +18,14 @@ namespace ASPOblig.Controllers
             List<Message> m = db.Messages.ToList();
             return View(m);
         }
+        
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Index(string searchphrase)
+        {
+            ViewBag.Message = "Søkeresultater for: \"" + searchphrase + "\"";
+            List<Message> c = db.Messages.Where(m => m.message.Contains(searchphrase)).ToList();
+            return View(c);
+        }
 
         //
         // GET: /Messages/Details/5

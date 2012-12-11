@@ -5,10 +5,13 @@
     Layout = "~/Views/Shared/Master2.cshtml";
 }
 
+
+<div id="searchChannelsAdmin"><form method="post" action="Messages"><input name="searchphrase" type="text" /> <input id="ButtonSearch"type="submit" value="Søk" /></form></div>
 <h2>Messages</h2>
+<h1>@ViewBag.Message</h1>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create") 
 </p>
 <table>
     <tr>
