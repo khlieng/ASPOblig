@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using ASPOblig.Models;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ASPOblig.Controllers
 {
@@ -12,7 +14,23 @@ namespace ASPOblig.Controllers
     {
         //
         // GET: /Chat/
-                
+
+        private static Dictionary<string, DateTime> heartbeatState = new Dictionary<string, DateTime>();
+        private static readonly TimeSpan timeout = TimeSpan.FromSeconds(10);
+
+        /*public static ChatController()
+        {
+            Thread hbThread = new Thread(new ThreadStart(() => {
+                foreach (string client in heartbeatState.Keys)
+                {
+                    if (DateTime.Now - heartbeatState[client] > timeout)
+                    {
+                        //Logout(client);
+                    }
+                }
+            }));
+        }*/
+
         public ActionResult Index()
         {
             if (Session["login"] != null)
@@ -36,7 +54,26 @@ namespace ASPOblig.Controllers
             {
                 Session["currentPos"] = db.Messages.Max(m => m.id);
                 Session["join"] = true;
+                /*heartbeatState.Add(Session["nick"].ToString(), DateTime.Now);
+                ThreadPool.QueueUserWorkItem(new WaitCallback((o) =>
+                {
+                    HttpSessionStateBase session = (HttpSessionStateBase)o;
+                    while (true)
+                    {
+                        if (DateTime.Now - heartbeatState[session["nick"].ToString()] > timeout)
+                        {
+                            Logout(session["nick"].ToString());
+                            break;
+                        }
+                        Thread.Sleep(1000);
+                    }
+                }), Session);*/
             }
+        }
+
+        public void Heartbeat()
+        {
+            heartbeatState[Session["nick"].ToString()] = DateTime.Now;
         }
 
         /// <summary>
@@ -300,10 +337,16 @@ namespace ASPOblig.Controllers
         /// </summary>
         public void Logout()
         {
+            Logout(Session["nick"].ToString());
+        }
+
+        private void Logout(string nick)
+        {
             DataClassesDataContext db = new DataClassesDataContext();
             try
             {
-                var channels = db.UserChannelMappings.Where(m => m.userid == (int)Session["userid"] && m.type == "join");
+                int userid = db.Users.Where(u => u.nick == nick).First().id;
+                var channels = db.UserChannelMappings.Where(m => m.userid == userid && m.type == "join");
                 db.UserChannelMappings.DeleteAllOnSubmit(channels);
 
                 foreach (var mapping in channels)
