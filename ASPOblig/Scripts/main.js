@@ -136,7 +136,7 @@ $(document).ready(function () {
 
     $.get("Chat/GetUserData", function (result) {
         currentNick = result.nick;
-        alert(result.type);
+        //alert(result.type);
         if (result.type == "admin") {
             $("#menu p:first-child").before('<a href="Admin"><p>Admin</p></a>');
         }  
@@ -180,18 +180,22 @@ function getUsers(channel) {
         var userlist = "#users-" + channel;
         for (n in result) {
             $(userlist).append('<p id="user-' + channel + '-' + result[n].nick + '">' + result[n].nick + '</p>');
-            $('#user-' + channel + '-' + result[n].nick).click(function () {
-                if ($("#chan-pm-" + result[n].nick).length < 1) {
-                    $("#pms").append('<div id="chan-pm-' + result[n].nick + '" class="tab-pm">' + result[n].nick + '</div>');                        
-                    $("#chats").append('<div id="pm-' + result[n].nick + '-container" class="chat-container"><div id="pm-' + result[n].nick + '" class="chat"></div></div>');
-                    $("#chan-pm-" + result[n].nick).click(function() {
-                        selectedChannel = "pm-" + result[n].nick;
-                        showChannelPm(result[n].nick);
-                    });
-                    selectedChannel = "pm-" + result[n].sender;
-                    showChannelPm(result[n].sender);
+            
+            $('#user-' + channel + '-' + result[n].nick).click(function(nick) {
+                return function() {
+                    if ($("#chan-pm-" + nick).length < 1) {
+                        
+                        $("#pms").append('<div id="chan-pm-' + nick + '" class="tab-pm">' + nick + '</div>');                        
+                        $("#chats").append('<div id="pm-' + nick + '-container" class="chat-container"><div id="pm-' + nick + '" class="chat"></div></div>');
+                        $("#chan-pm-" + nick).click(function() {
+                            selectedChannel = "pm-" + nick;
+                            showChannelPm(nick);
+                        });
+                        selectedChannel = "pm-" + nick;
+                        showChannelPm(nick);
+                    }
                 }
-            });
+            }(result[n].nick));
         }
 
         $("#" + channel + "-header .chat-usercount").html(result.length);
@@ -289,7 +293,7 @@ function leaveChannel(channel) {
 function refreshMessages() {
     $.get("Chat/GetMessages", function (result) {
         for (n in result) {
-            if (result[n].destination == currentNick) {
+            if (result[n].destination == "pm-" + currentNick) {
                 if ($("#chan-pm-" + result[n].sender).length < 1) {
                     $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
                     $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
@@ -298,7 +302,7 @@ function refreshMessages() {
                         showChannelPm(result[n].sender);
                     });
                 }
-                write("tmp", result[n].message, "pm-" + result[n].sender, result[n].sender);
+                write("tmp", result[n].message.substring(4), "pm-" + result[n].sender, result[n].sender);
             }
             else {
                 if (result[n].message.indexOf("msg:") == 0) {
@@ -319,19 +323,23 @@ function refreshMessages() {
 
                     write(-1, " har blitt med i kanalen.", result[n].destination, nick);
 
-                    $(userlist).append('<p id="user-' + result[n].destination + '-' + nick + '">' + nick + '</p>');
-                    $('#user-' + result[n].destination + '-' + nick).click(function () {
-                        if ($("#chan-pm-" + result[n].sender).length < 1) {
-                            $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
-                            $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
-                            $("#chan-pm-" + result[n].sender).click(function() {
-                                selectedChannel = "pm-" + result[n].sender;
-                                showChannelPm(result[n].sender);
-                            });
-                            selectedChannel = "pm-" + result[n].sender;
-                            showChannelPm(result[n].sender);
-                        }           
-                    });
+                    if ($('#user-' + result[n].destination + '-' + nick).length < 1) {
+                        $(userlist).append('<p id="user-' + result[n].destination + '-' + nick + '">' + nick + '</p>');
+                        $('#user-' + result[n].destination + '-' + nick).click(function(sender) {
+                            return function() {
+                                if ($("#chan-pm-" + sender).length < 1) {
+                                    $("#pms").append('<div id="chan-pm-' + sender + '" class="tab-pm">' + sender + '</div>');                        
+                                    $("#chats").append('<div id="pm-' + sender + '-container" class="chat-container"><div id="pm-' + sender + '" class="chat"></div></div>');
+                                    $("#chan-pm-" + sender).click(function() {
+                                        selectedChannel = "pm-" + sender;
+                                        showChannelPm(sender);
+                                    });
+                                    selectedChannel = "pm-" + sender;
+                                    showChannelPm(sender);
+                                }
+                            }
+                        }(result[n].sender));
+                    }
                 }
                 else if(result[n].message.indexOf("leave:") == 0) {
                     var nick = result[n].message.split(":")[1];
