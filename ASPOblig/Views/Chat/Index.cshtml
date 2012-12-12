@@ -33,8 +33,7 @@
 </div>
 <div id="userlists" class="noselect"></div>
 <div id="menu">
-    <p>Innstillinger</p>
-    <p>SMS</p>
+    <p id="innstillinger-user">Innstillinger</p>
     <p id="logout">Logg ut</p>
 </div>
 <div id="userinfo" class="noselect">Du er <b>...</b></div>
@@ -61,4 +60,6 @@
         <p>Nils</p>
     </div>
 </div>
+<form id="profilePicForm" method="post" enctype="multipart/form-data" action="Chat/UploadPic" target="hax"><input id="uploadProfilePic" style="display:none;" name="file" type="file"></form>
+<iframe name="hax" style="display:none;"></iframe>
 <div id="modaloverlay"></div>
