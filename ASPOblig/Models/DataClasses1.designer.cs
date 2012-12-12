@@ -523,6 +523,8 @@ namespace ASPOblig.Models
 		
 		private string _type;
 		
+		private string _phone;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -535,6 +537,8 @@ namespace ASPOblig.Models
     partial void OnpasswordChanged();
     partial void OntypeChanging(string value);
     partial void OntypeChanged();
+    partial void OnphoneChanging(string value);
+    partial void OnphoneChanged();
     #endregion
 		
 		public User()
@@ -618,6 +622,26 @@ namespace ASPOblig.Models
 					this._type = value;
 					this.SendPropertyChanged("type");
 					this.OntypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_phone", DbType="NVarChar(20)")]
+		public string phone
+		{
+			get
+			{
+				return this._phone;
+			}
+			set
+			{
+				if ((this._phone != value))
+				{
+					this.OnphoneChanging(value);
+					this.SendPropertyChanging();
+					this._phone = value;
+					this.SendPropertyChanged("phone");
+					this.OnphoneChanged();
 				}
 			}
 		}

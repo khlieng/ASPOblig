@@ -331,6 +331,17 @@ namespace ASPOblig.Controllers
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetPhoneNumber(string nick)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+            string phone = db.Users.Where(u => u.nick == nick).First().phone;
+            return Json(new
+            {
+                phone = phone,
+                status = "inactive"
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         /// <summary>
         /// Brukes for og logge ut. 
         /// Nick fjernes fra brukerlisten

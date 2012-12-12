@@ -26,6 +26,12 @@ $(document).ready(function () {
         $("#textbox-channel").focus();
     });
 
+    $("#smsButton").click(function() {
+        $(this).hide();
+        $("#textbox-smsChat").show();
+        $("#textbox-smsChat").focus();
+    });
+
     // Brukes for å logge ut, setter click event på logut knappen
     $("#logout").click(function () {
         $.get("Chat/Logout", function () {
@@ -64,6 +70,11 @@ $(document).ready(function () {
         $(this).hide();
         $("#addChannel").show();
     });
+
+    $("#textbox-smsChat").focusout(function() {
+        $(this).hide();
+        $("#smsButton").show();
+    })
 
     //brukes for å legge til en melding og sender den til rett destinasjon, menldingen lagres også i DB
     $("#entry").keypress(function (event) {
@@ -136,7 +147,18 @@ $(document).ready(function () {
 
     $.get("Chat/GetUserData", function (result) {
         currentNick = result.nick;
-        //alert(result.type);
+        $.get("Chat/GetPhoneNumber", { nick: currentNick }, function(result) {
+            if (result.phone == "") {
+
+            }
+            else if (result.status == "inactive") {
+
+            }
+            else if (result.status == "active") {
+
+            }
+        });
+
         if (result.type == "admin") {
             $("#menu p:first-child").before('<a href="Admin"><p>Admin</p></a>');
         }  

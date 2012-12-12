@@ -377,7 +377,7 @@ body {
 	font-weight: bold;
 }
 
-#textbox-channel 
+#textbox-channel, #textbox-smsChat
 {
     float: left;
 	margin: 10px;
@@ -390,7 +390,12 @@ body {
 	display: none;
 }
 
-#textbox-channel:focus, #textbox-contact:focus, #textbox-allowUser:focus, #textbox-addAdmin:focus
+#textbox-smsChat {
+	float: right;
+	margin-right: 220px;
+}
+
+#textbox-channel:focus, #textbox-contact:focus, #textbox-allowUser:focus, #textbox-addAdmin:focus, #textbox-smsChat:focus
 {
     border: 1px solid #111;
     padding: 4px 5px;
@@ -433,6 +438,7 @@ body {
 	position: absolute;
 	bottom: 0px;
 	left: 0px;
+	right: 0px;
 }
 
 #login-container input[type="submit"], button {
