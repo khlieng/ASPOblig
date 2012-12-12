@@ -26,5 +26,11 @@
         <elementListCompartment Id="6748c298-8d5a-4b78-ac84-c1932e7f6632" absoluteBounds="1.1400000000000001, 1.21, 1.9700000000000002, 1.19354248046875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="11be98c4-f849-4921-b3bf-68e1f3d8f5b8" absoluteBounds="6.25, 0.75, 2, 1.26050048828125">
+      <DataClassMoniker Name="/DataClassesDataContext/PhoneActivation" />
+      <nestedChildShapes>
+        <elementListCompartment Id="37c5b180-ba1d-40f3-bcab-ea4ccaba3660" absoluteBounds="6.2650000000000006, 1.21, 1.9700000000000002, 0.70050048828125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

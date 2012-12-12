@@ -14,7 +14,7 @@ $(document).ready(function () {
 
 
     $("#innstillinger-user").click(function () {
-        window.alert("not implemented yet");
+        alert("not implemented yet");
     });
 
 
@@ -38,6 +38,8 @@ $(document).ready(function () {
         $("#textbox-smsChat").show();
         $("#textbox-smsChat").focus();
     });
+
+    
 
     // Brukes for å logge ut, setter click event på logut knappen
     $("#logout").click(function () {
@@ -74,6 +76,7 @@ $(document).ready(function () {
         }
     });
 
+
     $("#textbox-channel").focusout(function () {
         $(this).hide();
         $("#addChannel").show();
@@ -82,7 +85,8 @@ $(document).ready(function () {
     $("#textbox-smsChat").focusout(function() {
         $(this).hide();
         $("#smsButton").show();
-    })
+    });
+
 
     //brukes for å legge til en melding og sender den til rett destinasjon, menldingen lagres også i DB
     $("#entry").keypress(function (event) {
@@ -155,42 +159,52 @@ $(document).ready(function () {
 
     $.get("Chat/GetUserData", function (result) {
         currentNick = result.nick;
-        $.get("Chat/GetPhoneNumber", { nick: currentNick }, function(result) {
-            if (result.phone == "") {
-
-            }
-            else if (result.status == "inactive") {
-
-            }
-            else if (result.status == "active") {
-
-            }
-        });
+        
 
         if (result.type == "admin") {
-            $("#menu p:first-child").before('<a href="Admin"><p>Admin</p></a>');
+            $("#menu").prepend('<a href="Admin"><p>Admin</p></a>');
 
             if (result.pic == "img/profilepix/") {
-                $("#menu a:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/Bjarne.png">');
+                $("#menu").prepend('<img class="profile-image" width="48" height="64" src="img/profilepix/Bjarne.png">');
             }
             else {
-                $("#menu a:first-child").before('<img class="profile-image" width="48" height="64" src="' + result.pic + '">');
+                $("#menu").prepend('<img class="profile-image" width="48" height="64" src="' + result.pic + '">');
             }
         }
-        else {
-            if (result.pic == "img/profilepix/") {
-                $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/Bjarne.png">');
+
+        $.get("Chat/GetPhoneNumber", { nick: currentNick }, function(result) {
+            if (result.phone == "") {
+                $("#menu").prepend('<p id="registerPhone">Registrer telefon</p><input id="textbox-registerPhone" type="text">');
+                $("#registerPhone").click(function() {
+                    $(this).hide();
+                    $("#textbox-registerPhone").show();
+                    $("#textbox-registerPhone").focus();
+                });
+                $("#textbox-registerPhone").focusout(function() {
+                    $(this).hide();
+                    $("#registerPhone").show();
+                });
+                $("#textbox-registerPhone").keypress(function(event) {
+                    if (event.which == 13) {
+                        $.get("Chat/RegisterPhone", { phone: $(this).val() }, function(result) {
+                            alert(result.code);
+                        });
+                    }
+                });
             }
-            else {
-                $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="' + result.pic + '">');
+            else if (result.status == "inactive") {
+                $("#menu").prepend("<p>Send 1567 til 26112</p>");
             }
-        }
+            else if (result.status == "active") {
+                $("#menu").prepend("<p>Endre telefonnummer</p>");
+            }
+        });
         
 
         $(".profile-image").click(function () {
             $("#uploadProfilePic").change(function () {
                 $("#profilePicForm").submit(/*function () {
-                    //$.post("Chat/UploadPic", $("#profilePicForm").serialize());
+                    $.post("Chat/UploadPic", $("#profilePicForm").serialize());
                     return false;
                 }*/);
             });

@@ -5,8 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using ASPOblig.Models;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ASPOblig.Controllers
 {
@@ -14,23 +12,7 @@ namespace ASPOblig.Controllers
     {
         //
         // GET: /Chat/
-
-        private static Dictionary<string, DateTime> heartbeatState = new Dictionary<string, DateTime>();
-        private static readonly TimeSpan timeout = TimeSpan.FromSeconds(10);
-
-        /*public static ChatController()
-        {
-            Thread hbThread = new Thread(new ThreadStart(() => {
-                foreach (string client in heartbeatState.Keys)
-                {
-                    if (DateTime.Now - heartbeatState[client] > timeout)
-                    {
-                        //Logout(client);
-                    }
-                }
-            }));
-        }*/
-
+        
         public ActionResult Index()
         {
             if (Session["login"] != null)
@@ -54,26 +36,7 @@ namespace ASPOblig.Controllers
             {
                 Session["currentPos"] = db.Messages.Max(m => m.id);
                 Session["join"] = true;
-                /*heartbeatState.Add(Session["nick"].ToString(), DateTime.Now);
-                ThreadPool.QueueUserWorkItem(new WaitCallback((o) =>
-                {
-                    HttpSessionStateBase session = (HttpSessionStateBase)o;
-                    while (true)
-                    {
-                        if (DateTime.Now - heartbeatState[session["nick"].ToString()] > timeout)
-                        {
-                            Logout(session["nick"].ToString());
-                            break;
-                        }
-                        Thread.Sleep(1000);
-                    }
-                }), Session);*/
             }
-        }
-
-        public void Heartbeat()
-        {
-            heartbeatState[Session["nick"].ToString()] = DateTime.Now;
         }
 
         /// <summary>
@@ -450,6 +413,27 @@ namespace ASPOblig.Controllers
         {
             DataClassesDataContext db = new DataClassesDataContext();
             return db.Channels.Where(c => c.id == id).First().name;
+        }
+
+        public ActionResult RegisterPhone(string phone)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+            if (db.PhoneActivations.Where(pa => pa.userid == (int)Session["userid"]).Count() < 1)
+            {
+                User user = db.Users.Where(u => u.nick == Session["nick"].ToString()).First();
+                user.phone = phone;
+                UpdateModel(user);
+
+                PhoneActivation pa = new PhoneActivation
+                {
+                    userid = (int)Session["userid"],
+                    code = "4672"
+                };
+                db.PhoneActivations.InsertOnSubmit(pa);
+                db.SubmitChanges();
+            }
+
+            return Json(new { code = "1337" + phone }, JsonRequestBehavior.AllowGet);
         }
     }
 }

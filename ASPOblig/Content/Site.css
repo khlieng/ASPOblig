@@ -395,13 +395,13 @@ body {
 	margin-right: 220px;
 }
 
-#textbox-channel:focus, #textbox-contact:focus, #textbox-allowUser:focus, #textbox-addAdmin:focus, #textbox-smsChat:focus
+#textbox-channel:focus, #textbox-contact:focus, #textbox-allowUser:focus, #textbox-addAdmin:focus, #textbox-smsChat:focus, #textbox-registerPhone:focus
 {
     border: 1px solid #111;
     padding: 4px 5px;
 }
 
-#textbox-contact, #textbox-allowUser, #textbox-addAdmin {
+#textbox-contact, #textbox-allowUser, #textbox-addAdmin, #textbox-registerPhone {
 	float: left;
 	margin: 10px;
 	padding: 5px 6px;
@@ -411,6 +411,10 @@ body {
 	color: #FFF;
 	font: 12px Open Sans, sans-serif;
 	width: 168px;
+}
+
+#textbox-registerPhone {
+	display: none;
 }
 
 #textbox-allowUser, #textbox-addAdmin {
