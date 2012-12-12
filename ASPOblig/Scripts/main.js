@@ -8,8 +8,15 @@ $(document).ready(function () {
 
     //$("body").click(function () {
     //    alert("!");
-        //sms("4745514151", "AFRIKA", "test");
+    //sms("4745514151", "AFRIKA", "test");
     //});
+
+
+
+    $("#innstillinger-user").click(function () {
+        window.alert("not implemented yet");
+    });
+
 
     $(window).keyup(function (event) {
         if (event.which == 67) {
@@ -32,6 +39,7 @@ $(document).ready(function () {
             location = "";
         });
     });
+
 
 
     $("#userinfo").click(function () {
@@ -139,28 +147,35 @@ $(document).ready(function () {
         //alert(result.type);
         if (result.type == "admin") {
             $("#menu p:first-child").before('<a href="Admin"><p>Admin</p></a>');
-        }  
-        $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/' + currentNick + '.png">');
-        
-        $("#userinfo").html("Du er <b>" + currentNick + "</b>");
 
-        $(".profile-image").fileupload({
-            drop: function (e, data) {
-                $.each(data.files, function (index, file) {
-                    writeSystem("Laster opp: " + file.name);
-                });
-            },
-            done: function (e, data) {
-                $.each(data.files, function (index, file) {
-                    writeSystem(file.name + " ferdig!");
-                });
-            },
-            progressall: function (e, data) {
-                var progress = data.loaded / data.total * 100;
-                writeSystem(progress);
-            },
-            formData: { type: "profilepic" }
+            if (result.pic == "img/profilepix/") {
+                $("#menu a:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/Bjarne.png">');
+            }
+            else {
+                $("#menu a:first-child").before('<img class="profile-image" width="48" height="64" src="' + result.pic + '">');
+            }
+        }
+        else {
+            if (result.pic == "img/profilepix/") {
+                $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="img/profilepix/Bjarne.png">');
+            }
+            else {
+                $("#menu p:first-child").before('<img class="profile-image" width="48" height="64" src="' + result.pic + '">');
+            }
+        }
+        
+
+        $(".profile-image").click(function () {
+            $("#uploadProfilePic").change(function () {
+                $("#profilePicForm").submit(/*function () {
+                    //$.post("Chat/UploadPic", $("#profilePicForm").serialize());
+                    return false;
+                }*/);
+            });
+            $("#uploadProfilePic").click();
         });
+
+        $("#userinfo").html("Du er <b>" + currentNick + "</b>");
     });
 
     $.get("Chat/Join", function () {
@@ -209,43 +224,44 @@ function getUsers(channel) {
 // Setter opp brukergrensesnittet for en kanal dersom brukeren har tilgang
 //
 function joinChannel(channel) {
-    $.get("Chat/JoinChannel", { channel: channel }, function(result) {
+    $.get("Chat/JoinChannel", { channel: channel }, function (result) {
         if (result != "DENIED") {
             $("#addChannel").before('<div id="chan-' + channel + '" class="tab">' + channel + '<div class="close">x</div></div>');
             $("#chats").append('<div id="' + channel + '-header" class="chat-header"><h2>' + channel + '</h2><div class="chat-usercount">0</div></div><div id="' + channel + '-container" class="chat-container"><div id="' + channel + '" data-url="Chat/FileUpload" class="chat"></div></div>');
             $("#userlists").append('<div id="users-' + channel + '-container" class="users-container"><div id="users-' + channel + '" class="users"></div></div>');
 
             $("#" + channel).fileupload({
-                drop: function(e, data) {
-                    $.each(data.files, function(index, file) {
-                        writeSystem("Laster opp: " + file.name);
+                drop: function (e, data) {
+                    $.each(data.files, function (index, file) {
+                        
+                        writeSystem(selectedChannel + "Laster opp: " + file.name);
                     });
                 },
-                done: function(e, data) {
-                    $.each(data.files, function(index, file) {
+                done: function (e, data) {
+                    $.each(data.files, function (index, file) {
                         writeSystem(file.name + " ferdig!");
                     });
                 },
-                progressall: function(e, data) {
+                progressall: function (e, data) {
                     var progress = data.loaded / data.total * 100;
                     writeSystem(progress);
                 },
-                formData: { type: "upload" }
+                formData: { type: "upload", destination: channel }
             });
 
             selectedChannel = channel;
             showChannel(channel);
-            fixScroll("#" + channel + "-container");        
+            fixScroll("#" + channel + "-container");
             fixScroll("#users-" + channel + "-container");
             $('#users-' + channel + '-container').scrollbarPaper();
             getUsers(channel);
 
             writeSystem(result);
 
-            $("#" + channel + "-header").click(function() {
+            $("#" + channel + "-header").click(function () {
                 if (result == "owner") {
-                    showModal("modal-channel");   
-                    loadSettings(channel);             
+                    showModal("modal-channel");
+                    loadSettings(channel);
                 }
             });
 
@@ -257,14 +273,13 @@ function joinChannel(channel) {
                 }
             });
 
-            $(".tab .close").click(function() {
+            $(".tab .close").click(function () {
                 leaveChannel($(this).parent().attr("id").split("-")[1]);
-            }); 
+            });
 
-           
+
         }
-        else
-        {
+        else {
             alert("GÅ VEKK!");
         }
     });
@@ -295,29 +310,40 @@ function refreshMessages() {
         for (n in result) {
             if (result[n].destination == "pm-" + currentNick) {
                 if ($("#chan-pm-" + result[n].sender).length < 1) {
-                    $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');                        
+                    $("#pms").append('<div id="chan-pm-' + result[n].sender + '" class="tab-pm">' + result[n].sender + '</div>');
                     $("#chats").append('<div id="pm-' + result[n].sender + '-container" class="chat-container"><div id="pm-' + result[n].sender + '" class="chat"></div></div>');
-                    $("#chan-pm-" + result[n].sender).click(function() {
+                    $("#chan-pm-" + result[n].sender).click(function () {
                         selectedChannel = "pm-" + result[n].sender;
                         showChannelPm(result[n].sender);
                     });
                 }
-                write("tmp", result[n].message.substring(4), "pm-" + result[n].sender, result[n].sender);
+                if (result[n].message.indexOf("msg:") == 0) {
+                    write("tmp", result[n].message.substring(4), "pm-" + result[n].sender, result[n].sender);
+                }
+                else if (result[n].message.indexOf("file:") == 0) {
+                    var filename = result[n].message.split(":")[1];
+                    var sender = result[n].sender;
+
+                    if (sender != currentNick) {
+                        write(-1, " har lastet opp " + filename + ", <a target=\"_blank\" href=\"" + filename + "\">Last ned</button", result[n].destination, sender);
+                    }
+                }
             }
             else {
+                alert(result[n].message);
                 if (result[n].message.indexOf("msg:") == 0) {
                     write(result[n].id, result[n].message.substring(4), result[n].destination, result[n].sender);
                 }
                 else if (result[n].message.indexOf("del:") == 0) {
                     var messageId = "message-" + result[n].message.split(":")[1];
                     $("#" + messageId).html('<p id="' + messageId + '" class="deleted">Meldingen har blitt slettet av en moderator.</p>');
-                    setTimeout(function() { 
-                        $("#" + messageId).fadeOut("fast"), function() {
+                    setTimeout(function () {
+                        $("#" + messageId).fadeOut("fast"), function () {
                             $(this).remove();
                         }
                     }, 2000);
                 }
-                else if(result[n].message.indexOf("join:") == 0) {
+                else if (result[n].message.indexOf("join:") == 0) {
                     var nick = result[n].message.split(":")[1];
                     var userlist = "#users-" + result[n].destination;
 
@@ -325,12 +351,12 @@ function refreshMessages() {
 
                     if ($('#user-' + result[n].destination + '-' + nick).length < 1) {
                         $(userlist).append('<p id="user-' + result[n].destination + '-' + nick + '">' + nick + '</p>');
-                        $('#user-' + result[n].destination + '-' + nick).click(function(sender) {
-                            return function() {
+                        $('#user-' + result[n].destination + '-' + nick).click(function (sender) {
+                            return function () {
                                 if ($("#chan-pm-" + sender).length < 1) {
-                                    $("#pms").append('<div id="chan-pm-' + sender + '" class="tab-pm">' + sender + '</div>');                        
+                                    $("#pms").append('<div id="chan-pm-' + sender + '" class="tab-pm">' + sender + '</div>');
                                     $("#chats").append('<div id="pm-' + sender + '-container" class="chat-container"><div id="pm-' + sender + '" class="chat"></div></div>');
-                                    $("#chan-pm-" + sender).click(function() {
+                                    $("#chan-pm-" + sender).click(function () {
                                         selectedChannel = "pm-" + sender;
                                         showChannelPm(sender);
                                     });
@@ -338,16 +364,24 @@ function refreshMessages() {
                                     showChannelPm(sender);
                                 }
                             }
-                        }(result[n].sender));
+                        } (result[n].sender));
                     }
                 }
-                else if(result[n].message.indexOf("leave:") == 0) {
+                else if (result[n].message.indexOf("leave:") == 0) {
                     var nick = result[n].message.split(":")[1];
 
                     write(-1, " har forlatt kanalen.", result[n].destination, nick);
 
                     $("#user-" + result[n].destination + "-" + nick).remove();
-                }       
+                }
+                else if (result[n].message.indexOf("file:") == 0) {
+                    var filename = result[n].message.split(":")[1];
+                    var sender = result[n].sender;
+
+                    if (sender != currentNick) {
+                        write(-1, " har lastet opp " + filename + ", <a target=\"_blank\" href=\"" + filename + "\">Last ned</button", result[n].destination, sender);
+                    }
+                }
             }
         }
 
@@ -378,12 +412,6 @@ function write(id, message, channel, nick) {
    
     return elem;
 }
-
-
-
-
-
-
 
 
 function writeSystem(message) {

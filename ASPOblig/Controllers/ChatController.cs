@@ -123,13 +123,15 @@ namespace ASPOblig.Controllers
 
         public ActionResult GetUserData()
         {
+            DataClassesDataContext db = new DataClassesDataContext();
             using (StreamWriter sw = new StreamWriter(System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "test.txt")))
             {
                 sw.WriteLine(Session["type"]);
             }
             return Json(new { 
                 nick = Session["nick"].ToString(),
-                type = Session["type"] == null ? String.Empty : Session["type"].ToString()
+                type = Session["type"] == null ? String.Empty : Session["type"].ToString(),
+                pic = "img/profilepix/" + db.Users.Where(u => u.nick == Session["nick"].ToString()).FirstOrDefault().pic
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -362,25 +364,35 @@ namespace ASPOblig.Controllers
 
                 db.SubmitChanges();
             }
-            catch (Exception e) { }
+            catch (Exception e) { e.GetBaseException(); }
             Session.Clear();
         }
 
-        public void FileUpload(String type)
+        public void FileUpload(string type, string destination)
         {
-            /*using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
+            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "out.txt"))
             {
-                sw.WriteLine(Request.Files[0].FileName);
-            }*/
-
+                sw.WriteLine(destination);
+            }
+            DataClassesDataContext db = new DataClassesDataContext();
             switch (type) {
                 case "upload":
                     foreach (string file in Request.Files)
                     {
                         string path = AppDomain.CurrentDomain.BaseDirectory;
+                   
                 
                         Request.Files[file].SaveAs(System.IO.Path.Combine(path, System.IO.Path.GetFileName(Request.Files[file].FileName)));
+
+                        db.Messages.InsertOnSubmit(new Message
+                        {
+                            sender = Session["nick"].ToString(),
+                            destination = destination,
+                            datetime = DateTime.Now,
+                            message = "file:" + Request.Files[file].FileName
+                        });
                     }
+                    db.SubmitChanges();
                     break;
 
                 case "profilepic":
@@ -392,6 +404,22 @@ namespace ASPOblig.Controllers
                     }
                     break;
             }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public void UploadPic(HttpPostedFileBase file)
+        {
+            DataClassesDataContext db = new DataClassesDataContext();
+
+            if (file != null && file.ContentLength > 0)
+            {
+                file.SaveAs(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img/profilepix/", Session["nick"].ToString() + "-" + file.FileName));
+                User user = db.Users.Where(u => u.nick == Session["nick"].ToString()).First();
+                user.pic = Session["nick"].ToString() + "-" + file.FileName;
+                UpdateModel(user);
+                db.SubmitChanges();
+            }
+
         }
 
         private string GetChannelName(int id)

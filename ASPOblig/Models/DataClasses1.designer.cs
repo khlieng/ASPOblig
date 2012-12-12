@@ -523,6 +523,10 @@ namespace ASPOblig.Models
 		
 		private string _type;
 		
+		private string _phone;
+		
+		private string _pic;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -535,6 +539,10 @@ namespace ASPOblig.Models
     partial void OnpasswordChanged();
     partial void OntypeChanging(string value);
     partial void OntypeChanged();
+    partial void OnphoneChanging(string value);
+    partial void OnphoneChanged();
+    partial void OnpicChanging(string value);
+    partial void OnpicChanged();
     #endregion
 		
 		public User()
@@ -618,6 +626,46 @@ namespace ASPOblig.Models
 					this._type = value;
 					this.SendPropertyChanged("type");
 					this.OntypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_phone", DbType="NVarChar(20)")]
+		public string phone
+		{
+			get
+			{
+				return this._phone;
+			}
+			set
+			{
+				if ((this._phone != value))
+				{
+					this.OnphoneChanging(value);
+					this.SendPropertyChanging();
+					this._phone = value;
+					this.SendPropertyChanged("phone");
+					this.OnphoneChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_pic", DbType="NVarChar(100)")]
+		public string pic
+		{
+			get
+			{
+				return this._pic;
+			}
+			set
+			{
+				if ((this._pic != value))
+				{
+					this.OnpicChanging(value);
+					this.SendPropertyChanging();
+					this._pic = value;
+					this.SendPropertyChanged("pic");
+					this.OnpicChanged();
 				}
 			}
 		}

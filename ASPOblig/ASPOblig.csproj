@@ -78,7 +78,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ChannelController.cs" />
     <Compile Include="Controllers\ChatController.cs" />
-    <Compile Include="Models\HomeController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
