@@ -117,7 +117,11 @@ namespace ASPOblig.Controllers
             int currentPos = (int)Session["currentPos"];
             Session["currentPos"] = db.Messages.Max(m => m.id);
 
-            var messages = db.Messages.Where(m => m.id > currentPos && db.Users.Where(u => u.nick == m.sender).First().id != (int)Session["userid"]);
+            //var messages = db.Messages.Where(m => m.id > currentPos);
+            
+
+            var messages = db.Messages.Where(m => m.id > currentPos && db.Users.Where(u => u.nick == m.sender).FirstOrDefault().id != (int)Session["userid"]);
+            
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 
@@ -428,6 +432,15 @@ namespace ASPOblig.Controllers
                 User user = db.Users.Where(u => u.nick == Session["nick"].ToString()).First();
                 user.pic = Session["nick"].ToString() + "-" + file.FileName;
                 UpdateModel(user);
+
+                db.Messages.InsertOnSubmit(new Message
+                {
+                    sender = "apekatt" + Session["nick"].ToString(),
+                    destination = "",
+                    datetime = DateTime.Now,
+                    message = "picupdated:img/profilepix/" + Session["nick"].ToString() + "-" + file.FileName
+                });
+
                 db.SubmitChanges();
             }
 

@@ -222,11 +222,14 @@ function getUsers(channel) {
                 return function() {
                     if ($("#chan-pm-" + nick).length < 1) {
                         
-                        $("#pms").append('<div id="chan-pm-' + nick + '" class="tab-pm">' + nick + '</div>');                        
+                        $("#pms").append('<div id="chan-pm-' + nick + '" class="tab-pm">' + nick + '<div class="close">x</div></div>');                        
                         $("#chats").append('<div id="pm-' + nick + '-container" class="chat-container"><div id="pm-' + nick + '" class="chat"></div></div>');
                         $("#chan-pm-" + nick).click(function() {
                             selectedChannel = "pm-" + nick;
                             showChannelPm(nick);
+                        });
+                        $("#chan-pm-" + nick + " .close").click(function () {
+                            leaveChannelPm(nick);
                         });
                         selectedChannel = "pm-" + nick;
                         showChannelPm(nick);
@@ -326,6 +329,18 @@ function leaveChannel(channel) {
     });
 }
 
+function leaveChannelPm(channel) {
+    if (selectedChannel == channel) {
+        selectedChannel = null;
+    }
+
+    $("#chan-pm-" + channel).fadeOut("fast", function () {
+        $("#chan-pm-" + channel).remove();
+        $("#pm-" + channel + "-header").remove();
+        $("#pm-" + channel + "-container").remove();
+    });
+}
+
 // Henter nye meldinger
 function refreshMessages() {
     $.get("Chat/GetMessages", function (result) {
@@ -352,7 +367,6 @@ function refreshMessages() {
                 }
             }
             else {
-                alert(result[n].message);
                 if (result[n].message.indexOf("msg:") == 0) {
                     write(result[n].id, result[n].message.substring(4), result[n].destination, result[n].sender);
                 }
@@ -382,6 +396,9 @@ function refreshMessages() {
                                         selectedChannel = "pm-" + sender;
                                         showChannelPm(sender);
                                     });
+                                    $("#chan-pm-" + sender + " .close").click(function () {
+                                        leaveChannelPm(sender);
+                                    });
                                     selectedChannel = "pm-" + sender;
                                     showChannelPm(sender);
                                 }
@@ -402,6 +419,13 @@ function refreshMessages() {
 
                     if (sender != currentNick) {
                         write(-1, " har lastet opp " + filename + ", <a target=\"_blank\" href=\"" + filename + "\">Last ned</button", result[n].destination, sender);
+                    }
+                }
+                else if (result[n].message.indexOf("picupdated:") == 0) {
+                    var filename = result[n].message.split(":")[1];
+                    var date = new Date();
+                    if (result[n].sender == "apekatt" + currentNick) {
+                        $(".profile-image").attr("src", filename/* + "?" + date.getTime()*/);
                     }
                 }
             }

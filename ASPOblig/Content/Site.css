@@ -360,7 +360,7 @@ body {
     background: #000;
 }
 
-.tab .close {
+.tab .close, .tab-pm .close {
 	float: right;
 	color: #333;
 	padding-left: 5px;
@@ -368,7 +368,7 @@ body {
 	margin-right: -7px;
 }
 
-.tab .close:hover {
+.tab .close:hover, .tab-pm .close:hover {
 	color: #FFF;
 }
 
@@ -437,7 +437,7 @@ body {
 #pms {
 	position: absolute;
 	bottom: 0px;
-	left: 0px;
+	left: 10px;
 	right: 0px;
 }
 
@@ -613,5 +613,12 @@ div.scrollbarpaper-drag-bottom
 .profile-image 
 {
     margin-left: 10px;
+    margin-top: 3px;
+    margin-bottom: 3px;
     border: 3px solid #FFF;
+    cursor: pointer;
+}
+
+.profile-image:hover {
+	border-color: #8DC210;
 }
